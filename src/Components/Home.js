@@ -13,7 +13,7 @@ export function Home() {
                 </div>
                 <section class="alex flex-col w-11/12">
                     <div class="m-5 p-5 ">
-                        <button class="bg-grotto p-5 rounded-xl" onClick={() => navigate('/Ventas')} >Nuevo Pedido</button>
+                        <button class="bg-grotto p-5 rounded-xl font-semibold border-2 border-royal" onClick={() => navigate('/Ventas')} >Nuevo Pedido</button>
                     </div>
                     <div class="flex content-center items-center">
                         <table class="table-auto border-collapse border border-grotto self-center ml-10">
