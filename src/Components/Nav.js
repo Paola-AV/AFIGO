@@ -6,7 +6,7 @@ export function Nav(){
         <header>
         <div class="text-white bg-navy py-5 px-10 md:flex md:items-center md:justify-between md:px-40">
       <div class="flex items-center justify-between">
-        <div class="bg-light rounded-full"><img src="afigoL.png" class="w-20 p-1 pt-2"/></div>
+        <div class="bg-light rounded-full -translate-x-20"><img src="afigoL.png" class="w-20 pt-2"/></div>
 
       </div>
       <div class="flex flex-row text-left justify-center">
