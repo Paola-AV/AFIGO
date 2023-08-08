@@ -18,9 +18,9 @@ code {
 
 
 :root {
-	--mainColor: #29335c;
-	--mainColorLight: #5767aa;
-	--secondaryColor: #db2b39;
+	--mainColor: #29335c; 
+	--mainColorLight: #29335c;
+	--secondaryColor:#29335c;
 	--textColor: #eee;
 }
 
