@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -6,11 +7,12 @@ import { AiOutlineForm } from "react-icons/ai";
 import { AiOutlineUser } from "react-icons/ai";
 import { HiMenuAlt3 } from "react-icons/hi";
 
+
 export function Sidebar(){
   const menus = [
     { name: "Pedidos", link: "/Inicio", icon: AiOutlineShoppingCart },
     { name: "Cotizaciones", link: "/Cotizacion", icon: AiOutlineForm },
-    { name: "Usuarios", link: "/Inicio", icon: AiOutlineUser },
+    { name: "Usuarios", link: "/Usuarios", icon: AiOutlineUser },
     { name: "analytics", link: "/Inicio", icon: AiOutlineUser, margin: true },
     { name: "File Manager", link: "/Inicio", icon: AiOutlineUser },
     { name: "Cart", link: "/Inicio", icon: AiOutlineUser },
@@ -102,3 +104,4 @@ export function Sidebar(){
             
         </div>
     )*/
+
