@@ -20,38 +20,38 @@ export function Cotizacion() {
 
                             <thead >
                                 <tr class="border border-royal bg-grotto">
-                                    <th class="p-2 border border-royal">Vendendor</th>
-                                    <th class="p-2 border border-royal">Cliente</th> 
-                                    <th class="p-2 border border-royal">Producto</th>
-                                    <th class="p-2 border border-royal">Cantidad</th>
-                                    <th class="p-2 border border-royal">Descripcion</th>
-                                    <th class="p-2 border border-royal">Contacto</th>
+                                    <th class="p-2 border border-mid">Vendendor</th>
+                                    <th class="p-2 border border-mid">Cliente</th> 
+                                    <th class="p-2 border border-mid">Producto</th>
+                                    <th class="p-2 border border-mid">Cantidad</th>
+                                    <th class="p-2 border border-mid">Descripcion</th>
+                                    <th class="p-2 border border-mid">Contacto</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="bg-baby">
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
                                 </tr>
                                 <tr class="bg-baby">
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
                                 </tr>
                                 <tr class="bg-baby">
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
-                                    <th class="p-2 border border-grotto"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
+                                    <th class="p-2 border border-mid"> </th>
                                 </tr>
                             </tbody>
 

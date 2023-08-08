@@ -3,10 +3,11 @@ module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
     colors:{
-      navy:'#262D55',
-      royal:'#3b4a85',
-      grotto:'#4b5da6',
-      baby:'#9fb2c6',
+      navy:'#001B48',
+      royal:'#00481',
+      mid:'#3a4679',
+      grotto:'#BFC5FF',
+      baby:'#dbe1ff',
       white:'#F1F2F3',
     },
     extend: {},

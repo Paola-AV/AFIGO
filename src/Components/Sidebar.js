@@ -1,55 +1,72 @@
+
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { AiOutlineForm } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
+import { HiMenuAlt3 } from "react-icons/hi";
+
 
 export function Sidebar(){
-    const [open, setOpen] = useState(true);
-    const Menus = [
-      { title: "Pedidos", src: "Chart_fill" },
-      { title: "Cotizaciones", src: "Chat" },
-      { title: "Usuarios", src: "User", gap: true },
-      { title: "Configuracion", src: "Calendar" },
-      { title: "Search", src: "Search" },
-      { title: "Analytics", src: "Chart" },
-      { title: "Files ", src: "Folder", gap: true },
-      { title: "Setting", src: "Setting" },
-    ];
-  
-    return (
-      <div className="flex">
-        <div
-          className={` ${
-            open ? "w-72" : "w-20 "
-          } bg-dark-purple h-screen p-5  pt-8 relative duration-300`}
-        >
-          <img
-            src="./src/assets/control.png"
-            className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
-             border-2 rounded-full  ${!open && "rotate-180"}`}
+  const menus = [
+    { name: "Pedidos", link: "/Inicio", icon: AiOutlineShoppingCart },
+    { name: "Cotizaciones", link: "/Cotizacion", icon: AiOutlineForm },
+    { name: "Usuarios", link: "/Usuarios", icon: AiOutlineUser },
+    { name: "analytics", link: "/Inicio", icon: AiOutlineUser, margin: true },
+    { name: "File Manager", link: "/Inicio", icon: AiOutlineUser },
+    { name: "Cart", link: "/Inicio", icon: AiOutlineUser },
+    { name: "Saved", link: "/Inicio", icon: AiOutlineUser, margin: true },
+    { name: "Setting", link: "/Inicio", icon: AiOutlineUser },
+  ];
+  const [open, setOpen] = useState(true);
+  return (
+    <section className="flex gap-6">
+      <div
+        className={`bg-navy min-h-screen ${
+          open ? "w-72" : "w-16"
+        } duration-500 text-gray-100 px-4`}
+      >
+        <div className="py-3 flex justify-end">
+          <HiMenuAlt3
+            size={26}
+            className="cursor-pointer text-white"
             onClick={() => setOpen(!open)}
           />
-         
-          <ul className="pt-6">
-            {Menus.map((Menu, index) => (
-              <li
-                key={index}
-                className={`flex  rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4 
-                ${Menu.gap ? "mt-9" : "mt-2"} ${
-                  index === 0 && "bg-light-white"
-                } `}
-              >
-                <img src={`./src/assets/${Menu.src}.png`} />
-                <span className={`${!open && "hidden"} origin-left duration-200`}>
-                  {Menu.title}
-                </span>
-              </li>
-            ))}
-          </ul>
         </div>
-        <div className="h-screen flex-1 p-7">
-          <h1 className="text-2xl font-semibold ">Home Page</h1>
+        <div className="mt-4 flex flex-col gap-4 relative">
+          {menus?.map((menu, i) => (
+            <Link
+              to={menu?.link}
+              key={i}
+              className={` ${
+                menu?.margin && "mt-5"
+              } group flex items-center text-sm  gap-3.5 font-medium p-2 hover:bg-gray-800 rounded-md text-white`}
+            >
+              <div>{React.createElement(menu?.icon, { size: "20" })}</div>
+              <h2
+                style={{
+                  transitionDelay: `${i + 3}00ms`,
+                }}
+                className={`whitespace-pre duration-500 ${
+                  !open && "opacity-0 translate-x-28 overflow-hidden"
+                }`}
+              >
+                {menu?.name}
+              </h2>
+              <h2
+                className={`${
+                  open && "hidden"
+                } absolute left-48 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit  `}
+              >
+                {menu?.name}
+              </h2>
+            </Link>
+          ))}
         </div>
       </div>
-    );
+    </section>
+  );
 }
 
 /*  const navigate=useNavigate()
@@ -87,3 +104,4 @@ export function Sidebar(){
             
         </div>
     )*/
+

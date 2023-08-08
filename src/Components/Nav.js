@@ -13,7 +13,7 @@ export function Nav(){
 	};
 
 	return (
-		<header>
+		<header class="bg-navy">
 			<div class="bg-light rounded-full grid-row grid-rows-2"><img src="afigoL.png" class="w-20 pt-2"/></div>
 			<nav ref={navRef}>
 		
