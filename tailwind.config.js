@@ -5,8 +5,9 @@ module.exports = {
     colors:{
       navy:'#001B48',
       royal:'#00481',
-      grotto:'#018AC0',
-      baby:'#018AC0',
+      mid:'#3a4679',
+      grotto:'#BFC5FF',
+      baby:'#dbe1ff',
       white:'#F1F2F3',
     },
     extend: {},

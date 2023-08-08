@@ -6,7 +6,7 @@ export function FormularioC() {
     return (
         <section class="flex flex-col w-full justify-center items-center">
             <div class="self-start ml-20 mt-10">
-                <button onClick={() => navigate('/Cotizacion')}><IoChevronBackCircleSharp class="w-10 h-10 fill-royal"/></button>
+                <button onClick={() => navigate('/Cotizacion')}><IoChevronBackCircleSharp class="w-10 h-10 fill-navy"/></button>
             </div>
             <div class="pt-8 ">
                 <h1 class="text-4xl font-bold text-royal">Formulario de cotizaciones</h1>
@@ -34,7 +34,7 @@ export function FormularioC() {
                     <input class="border border-navy w-1/2"></input>
                 </div>
 
-                <button class="bg-royal text-white font-semibold p-3 pl-4 pr-4 mb-8 rounded-xl">Enviar</button>
+                <button class="bg-navy text-white font-semibold p-3 pl-4 pr-4 mb-8 rounded-xl">Enviar</button>
 
             </div>
         </section>
