@@ -13,11 +13,6 @@ export function Sidebar(){
     { name: "Pedidos", link: "/Inicio", icon: AiOutlineShoppingCart },
     { name: "Cotizaciones", link: "/Cotizacion", icon: AiOutlineForm },
     { name: "Usuarios", link: "/Usuarios", icon: AiOutlineUser },
-    { name: "analytics", link: "/Inicio", icon: AiOutlineUser, margin: true },
-    { name: "File Manager", link: "/Inicio", icon: AiOutlineUser },
-    { name: "Cart", link: "/Inicio", icon: AiOutlineUser },
-    { name: "Saved", link: "/Inicio", icon: AiOutlineUser, margin: true },
-    { name: "Setting", link: "/Inicio", icon: AiOutlineUser },
   ];
   const [open, setOpen] = useState(true);
   return (

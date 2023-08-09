@@ -11,9 +11,9 @@ export function Usuarios() {
                 <div>
                     <Sidebar class="w-3/12"/>
                 </div>
-                <section class="alex flex-col w-11/12">
+                <section class="alex flex-col w-9/12">
                     <div class="m-5 p-5 ">
-                        <button class="bg-grotto p-5 rounded-xl font-semibold border-2 border-royal" onClick={() => navigate('/formularioUsuario')}>Nuevo Usuario</button>
+                        <button class="bg-grotto p-5 rounded-full font-bold border-none shadow-md text-royal drop-shadow-2xl" onClick={() => navigate('/formularioUsuario')}>Nuevo Usuario</button>
                     </div>
                     <div class="flex content-center items-center overflow-x-auto overflow-y-auto">
 
@@ -27,17 +27,17 @@ export function Usuarios() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="bg-baby">
+                                <tr class="even:bg-grotto odd:bg-baby">
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                 </tr>
-                                <tr class="bg-baby">
+                                <tr class="even:bg-grotto odd:bg-baby">
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                 </tr>
-                                <tr class="bg-baby">
+                                <tr class="even:bg-grotto odd:bg-baby">
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>

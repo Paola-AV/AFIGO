@@ -11,15 +11,15 @@ export function Cotizacion() {
                 <div>
                     <Sidebar class="w-3/12"/>
                 </div>
-                <section class="alex flex-col w-11/12">
+                <section class="alex flex-col w-9/12">
                     <div class="m-5 p-5 ">
-                        <button class="bg-grotto p-5 rounded-xl font-semibold border-2 border-royal" onClick={() => navigate('/formularioCotizacion')}>Nueva Cotizacion</button>
+                        <button class="bg-grotto p-5 rounded-full font-bold border-none shadow-md text-royal drop-shadow-2xl" onClick={() => navigate('/formularioCotizacion')}>Nueva Cotizacion</button>
                     </div>
                     <div class="flex content-center items-center overflow-x-auto overflow-y-auto">
                         <table class="table-auto border-collapse border border-grotto self-center ml-10">
 
                             <thead >
-                                <tr class="border border-royal bg-grotto">
+                                <tr class="border border-royal bg-royal text-white">
                                     <th class="p-2 border border-mid">Vendendor</th>
                                     <th class="p-2 border border-mid">Cliente</th> 
                                     <th class="p-2 border border-mid">Producto</th>
@@ -29,7 +29,7 @@ export function Cotizacion() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="bg-baby">
+                                <tr class="even:bg-grotto odd:bg-baby">
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
@@ -37,7 +37,7 @@ export function Cotizacion() {
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                 </tr>
-                                <tr class="bg-baby">
+                                <tr class="even:bg-grotto odd:bg-baby">
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
@@ -45,7 +45,7 @@ export function Cotizacion() {
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                 </tr>
-                                <tr class="bg-baby">
+                                <tr class="even:bg-grotto odd:bg-baby">
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
                                     <th class="p-2 border border-mid"> </th>
