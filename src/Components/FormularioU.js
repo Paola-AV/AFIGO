@@ -1,48 +1,131 @@
-import { IoChevronBackCircleSharp} from "react-icons/io5";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Box, Button, TextField, Typography, Container, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-export function FormularioU(){
-    const navigate=useNavigate()
+export function FormularioU() {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        nombre: '',
+        direccion: '',
+        esAdmin: 'No',
+        usuario: '',
+        contrasena: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSelectChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Formulario enviado:', formData);
+        // Aquí irá la lógica para enviar los datos
+    };
+
     return (
-        <section class="flex flex-col w-full justify-center items-center">
-            <div class="self-start ml-20 mt-10">
-                <button onClick={() => navigate('/Inicio')}><IoChevronBackCircleSharp class="w-10 h-10 fill-navy"/></button>
-            </div>
-            <div class="pt-8 ">
-                <h1 class="text-4xl font-bold text-royal">Nuevo Usuario</h1>
-            </div>
-            <div class="flex flex-col w-1/2 justify-center items-center pt-20">
-                <div class="flex flex-col m-4 w-full justify-center items-center">
-                    <label class="font-semibold">Nombre</label>
-                    <input class="border border-navy w-1/2"></input>
-                </div>
+        <Container maxWidth="sm">
+            <Box sx={{ py: 4 }}>
+                {/* Botón regresar */}
+                <Box sx={{ mb: 3 }}>
+                    <Button
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() => navigate('/Usuarios')}
+                        sx={{ color: '#13191D', textTransform: 'none', fontSize: '1rem' }}
+                    >
+                        Atrás
+                    </Button>
+                </Box>
 
-                <div class="flex flex-col m-4 w-full justify-center items-center">
-                    <label class="font-semibold">Direccion</label>
-                    <input class="border border-navy w-1/2"></input>
-                </div>
+                {/* Título */}
+                <Box sx={{ textAlign: 'center', mb: 4 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#13191D' }}>
+                        Nuevo Usuario
+                    </Typography>
+                </Box>
 
-                <div class="flex flex-col m-4 w-full justify-center items-center">
-                    <label class="font-semibold">Usuario administrador</label>
-                    <select class="border border-navy w-1/2">
-                        <option>No</option>
-                        <option>Si</option>
-                    </select>
-                </div>
+                {/* Formulario */}
+                <Paper elevation={3} sx={{ p: 4 }}>
+                    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <TextField
+                            fullWidth
+                            label="Nombre"
+                            name="nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            variant="outlined"
+                        />
 
-                <div class="flex flex-col m-4 w-full justify-center items-center">
-                    <label class="font-semibold">Nombre de usuario</label>
-                    <input class="border border-navy w-1/2"></input>
-                </div>
+                        <TextField
+                            fullWidth
+                            label="Dirección"
+                            name="direccion"
+                            value={formData.direccion}
+                            onChange={handleChange}
+                            variant="outlined"
+                        />
 
-                <div class="flex flex-col m-4 w-full justify-center items-center">
-                    <label class="font-semibold">Contraseña</label>
-                    <input class="border border-navy w-1/2"></input>
-                </div>
+                        <FormControl fullWidth>
+                            <InputLabel>Usuario administrador</InputLabel>
+                            <Select
+                                name="esAdmin"
+                                value={formData.esAdmin}
+                                onChange={handleSelectChange}
+                                label="Usuario administrador"
+                            >
+                                <MenuItem value="No">No</MenuItem>
+                                <MenuItem value="Si">Sí</MenuItem>
+                            </Select>
+                        </FormControl>
 
-                <button class="bg-navy text-white font-semibold p-3 pl-4 pr-4 mb-8 rounded-xl">Enviar</button>
+                        <TextField
+                            fullWidth
+                            label="Nombre de usuario"
+                            name="usuario"
+                            value={formData.usuario}
+                            onChange={handleChange}
+                            variant="outlined"
+                        />
 
-            </div>
-        </section>
-    )
+                        <TextField
+                            fullWidth
+                            label="Contraseña"
+                            name="contrasena"
+                            type="password"
+                            value={formData.contrasena}
+                            onChange={handleChange}
+                            variant="outlined"
+                        />
+
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ 
+                                backgroundColor: '#FF5A00',
+                                '&:hover': { backgroundColor: '#CF4C05' },
+                                py: 1.5,
+                                fontWeight: 'bold',
+                                mt: 2
+                            }}
+                        >
+                            Enviar
+                        </Button>
+                    </Box>
+                </Paper>
+            </Box>
+        </Container>
+    );
 }
