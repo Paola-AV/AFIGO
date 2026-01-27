@@ -4,6 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
+import { Client } from "../Util/Client";
 
 
 export default function Usuarios() {
@@ -12,20 +13,20 @@ export default function Usuarios() {
     const [rowData, setRowData] = useState([]);
 
     useEffect(() => {
-        setRowData([
-            { Nombre: "Juan Perez", direccion: "Direccion 1", Usuario: "juanperez" },
-            { Nombre: "Maria Lopez", direccion: "Direccion 2", Usuario: "marialopez" }
-        ]);
+        Client.getUsuarios().then(data => {
+            setRowData(data);
+            console.log(data);
+        });
     }, []);
 
     const colDefs = [
-        { headerName: "Nombre", field: "Nombre", sortable: true, filter: true },
+        { headerName: "Nombre", field: "nombre", sortable: true, filter: true },
         { headerName: "Dirección", field: "direccion", sortable: true, filter: true },
-        { headerName: "Usuario", field: "Usuario", sortable: true, filter: true },
+        { headerName: "Usuario", field: "nombreDeUsuario", sortable: true, filter: true },
     ];
 
     const defaultColDef = {
-        editable: true,
+        editable: false,
         flex: 1,
         minWidth: 100,
         filter: true,

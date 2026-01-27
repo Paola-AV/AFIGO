@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Container, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Client } from "../Util/Client";
+
 
 export function FormularioU() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
+        userId:3,
         nombre: '',
         direccion: '',
-        esAdmin: 'No',
-        usuario: '',
-        contrasena: ''
+        usuarioAdmin: 'No',
+        nombreDeUsuario: '',
+        contrasenia: ''
     });
 
     const handleChange = (e) => {
@@ -20,6 +23,8 @@ export function FormularioU() {
             [name]: value
         }));
     };
+
+    useEffect(() => {console.log("Form data updated:", formData);}, [formData]);
 
     const handleSelectChange = (e) => {
         const { name, value } = e.target;
@@ -31,8 +36,26 @@ export function FormularioU() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Formulario enviado:', formData);
-        // Aquí irá la lógica para enviar los datos
+            if (!formData.nombre || !formData.direccion || !formData.nombreDeUsuario || !formData.contrasenia) {
+            alert('Por favor, complete todos los campos obligatorios.');
+            
+            return;
+            }
+            if (formData.usuarioAdmin === 'Si'){
+                formData.usuarioAdmin = 0;
+            }else{
+                formData.usuarioAdmin = 1;
+            }
+        Client.createUsuario(formData).then(result => {
+            e.preventDefault()
+            console.log('User creation result:', result);
+            if (result ) {
+                navigate('/Usuarios');
+            }
+        }).catch(error => {
+            console.error('Error creating user:', error);
+        });
+
     };
 
     return (
@@ -80,8 +103,8 @@ export function FormularioU() {
                         <FormControl fullWidth>
                             <InputLabel>Usuario administrador</InputLabel>
                             <Select
-                                name="esAdmin"
-                                value={formData.esAdmin}
+                                name="usuarioAdmin"
+                                value={formData.usuarioAdmin}
                                 onChange={handleSelectChange}
                                 label="Usuario administrador"
                             >
@@ -93,8 +116,8 @@ export function FormularioU() {
                         <TextField
                             fullWidth
                             label="Nombre de usuario"
-                            name="usuario"
-                            value={formData.usuario}
+                            name="nombreDeUsuario"
+                            value={formData.nombreDeUsuario}
                             onChange={handleChange}
                             variant="outlined"
                         />
@@ -102,9 +125,9 @@ export function FormularioU() {
                         <TextField
                             fullWidth
                             label="Contraseña"
-                            name="contrasena"
+                            name="contrasenia"
                             type="password"
-                            value={formData.contrasena}
+                            value={formData.contrasenia}
                             onChange={handleChange}
                             variant="outlined"
                         />
@@ -113,7 +136,7 @@ export function FormularioU() {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ 
+                            sx={{
                                 backgroundColor: '#FF5A00',
                                 '&:hover': { backgroundColor: '#CF4C05' },
                                 py: 1.5,
