@@ -10,12 +10,12 @@ export class Client {
                 "Content-Type": "application/json"
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return response.json();
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            });
     }
 
     static post(uri, body) {
@@ -26,12 +26,12 @@ export class Client {
             },
             body: JSON.stringify(body)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return response.json();
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            });
     }
 
     static put(uri, body) {
@@ -42,12 +42,16 @@ export class Client {
             },
             body: JSON.stringify(body)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return response.json();
-        });
+            .then(response => {
+
+                if (!response.ok) {
+                    
+                    let errText = "";
+                    try { errText = response.text(); } catch { }
+                    throw new Error(`HTTP ${response.status} ${response.statusText}${errText ? ` – ${errText}` : ""}`);
+                }
+                return response.status;
+            });
     }
 
     static delete(uri) {
@@ -57,63 +61,116 @@ export class Client {
                 "Content-Type": "application/json"
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return response.json().catch(() => null); 
-           
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json().catch(() => null);
+
+            });
     }
 
     //urls para usuarios
 
-    static getUsuarios (){
+    static getUsuarios() {
         return this.get(`Usuarios`);
     }
 
-     static getUsuarioById (id){
+    static getUsuarioById(id) {
         return this.get(`Usuarios/${id}`);
     }
 
-    static createUsuario (usuario){
+    static createUsuario(usuario) {
         return this.post(`Usuarios`, usuario);
     }
 
-    static updateUsuario ( usuario){
+    static updateUsuario(usuario) {
         return this.put(`Usuarios`, usuario);
     }
 
-    static deleteUsuario (id){
+    static deleteUsuario(id) {
         return this.delete(`Usuarios/${id}`);
     }
 
     //urls para pedidos
 
-    static getPedidos (){
+    static getPedidos() {
         return this.get(`Pedido`);
     }
 
-        static getPedidoById (id){
+    static getPedidoById(id) {
         return this.get(`Pedido/${id}`);
     }
 
-    static createPedido (pedido){
-        return this.post(`Pedido`, pedido);    
+    static createPedido(pedido) {
+        return this.post(`Pedido`, pedido);
     }
 
-    static updatePedido ( pedido){
+    static updatePedido(pedido) {
         return this.put(`Pedido`, pedido);
     }
-    static deletePedido (id){
+    static deletePedido(id) {
         return this.delete(`Pedido/${id}`);
     }
 
-    static getPedidoTipo(){
+    static getPedidoTipo() {
         return this.get(`Pedido/pedido`);
     }
 
-    static getPedidoCotizacion(){
+    static getPedidoCotizacion() {
         return this.get(`Pedido/cotizacion`);
     }
+
+    //urls para trabajadores
+
+    static getTrabajadores() {
+        return this.get(`Trabajador`);
+    }
+
+    static getTrabajadorById(id) {
+        return this.get(`Trabajador/${id}`);
+    }
+
+    static getTrabajadorByUsuarioId(id) {
+        return this.get(`Trabajador/user/${id}`);
+    }
+
+    static createTrabajador(trabajador) {
+        return this.post(`Trabajador`, trabajador);
+    }
+
+    static updateTrabajador(trabajador) {
+        return this.put(`Trabajador`, trabajador);
+    }
+
+    static deleteTrabajador(id) {
+        return this.delete(`Trabajador/${id}`);
+    }
+
+    //urls para peticion de vacaciones
+
+    static getPeticionesVacaciones() {
+        return this.get(`PeticionVacaciones`);
+    }
+
+    static getPeticionVacacionesById(id) {
+        return this.get(`PeticionVacaciones/${id}`);
+    }
+
+    static getPeticionVacacionesByTrabajadorId(id) {
+        return this.get(`PeticionVacaciones/trabajador/${id}`);
+    }
+
+    static createPeticionVacaciones(peticion) {
+        return this.post(`PeticionVacaciones`, peticion);
+    }
+
+    static updatePeticionVacaciones(peticion) {
+        return this.put(`PeticionVacaciones`, peticion);
+    }
+
+    static deletePeticionVacaciones(id) {
+        return this.delete(`PeticionVacaciones/${id}`);
+    }
+
 }

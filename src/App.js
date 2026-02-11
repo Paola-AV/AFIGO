@@ -8,6 +8,7 @@ import Usuarios from "./Components/usuarios";
 import LoginPage from "./Pages/loginPage";
 import HomePage from "./Pages/homePage";
 import Pedidos from "./Components/pedidos";
+import VacacionesPage from "./Pages/vacacionesPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/formularioCotizacion" element={<FormularioC/>}></Route>
         <Route path="/formularioUsuario" element={<FormularioU/>}></Route>
         <Route path="/Pedidos" element={<Pedidos/>}></Route>
+        <Route path="/Vacaciones" element={<VacacionesPage/>}></Route>
       </Routes>    
     </>
   );
