@@ -126,6 +126,11 @@ export default function AdminPeticionVacaciones() {
         }
     };
 
+    const colDefsDias = [
+        { headerName: "Trabajador", field: "usuario.nombre", sortable: true, filter: true, editable: false },
+        { headerName: "Dias disponibles", field: "diasDisponibles", sortable: true, filter: true, editable: false },
+    ];
+
     const onCellValueChanged = (params) => {
         console.log("Cell value changed:", params);
         const updatedPeticion = {
@@ -143,16 +148,30 @@ export default function AdminPeticionVacaciones() {
 
         <Box sx={{ width: '100%', p: 3 }}>
 
-
-            <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                <Typography variant="h5" component="h2" sx={{ mb: 2 }}>Peticiones de Vacaciones</Typography>
-                <div style={{ height: '100%', width: '100%' }}>
+            <Box sx={{ height:'40vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                <Typography variant="h5" component="h4" sx={{ mb: 2 }}>Peticiones de Vacaciones</Typography>
+                <div style={{  width: '100%' }}>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={colDefs}
                         defaultColDef={defaultColDef}
                         theme={themeQuartz}
                         onCellValueChanged={onCellValueChanged}
+                        domLayout='autoHeight'
+                    />
+                </div>
+            </Box>
+
+            <Box sx={{ height: '30vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                <Typography variant="h5" component="h4" sx={{ mb: 2 }}>Dias Disponibles</Typography>
+                <div style={{  width: '100%' }}>
+                    <AgGridReact
+                        rowData={trabajadores}
+                        columnDefs={colDefsDias}
+                        defaultColDef={defaultColDef}
+                        theme={themeQuartz}
+                        onCellValueChanged={onCellValueChanged}
+                        domLayout='autoHeight'
                     />
                 </div>
             </Box>
