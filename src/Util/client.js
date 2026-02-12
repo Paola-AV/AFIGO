@@ -45,7 +45,7 @@ export class Client {
             .then(response => {
 
                 if (!response.ok) {
-                    
+
                     let errText = "";
                     try { errText = response.text(); } catch { }
                     throw new Error(`HTTP ${response.status} ${response.statusText}${errText ? ` – ${errText}` : ""}`);
@@ -54,20 +54,21 @@ export class Client {
             });
     }
 
-    static delete(uri) {
-        return fetch(API_BASE_URL + uri, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                return response.json().catch(() => null);
 
-            });
+    static async delete(uri) {
+        const response = await fetch(API_BASE_URL + uri, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            let errText = "";
+            try { errText = await response.text(); } catch { }
+            throw new Error(`HTTP ${response.status}: ${response.statusText}${errText ? ` – ${errText}` : ""}`);
+        }
+
+        
+        return { ok: true, status: response.status }; 
     }
 
     //urls para usuarios
@@ -124,7 +125,7 @@ export class Client {
     //urls para trabajadores
 
     static getTrabajadores() {
-        return this.get(`Trabajador`);
+        return this.get(`Trabajador/vacationdays`);
     }
 
     static getTrabajadorById(id) {

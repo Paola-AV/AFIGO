@@ -94,11 +94,18 @@ export default function AdminPeticionVacaciones() {
                     e?.stopPropagation?.(); // evita seleccionar la fila al hacer click
 
                     try {
-                        await Client.deletePeticionVacaciones(params.data.id);
-                        // Usa forma funcional para evitar stale state
-                        setPeticionVacaciones(prev =>
-                            prev.filter(p => p.id !== params.data.id)
-                        );
+                        console.log("Attempting to delete vacation request with ID:", params);
+                        Client.deletePeticionVacaciones(params.data.idPeticion).then(result => {
+                            console.log("Vacation request deleted successfully:", result);
+                            if (result.ok || result === 204) {
+                                console.log("Removing vacation request from UI with ID:", params.data.idPeticion);
+                                setPeticionVacaciones(prev => prev.filter(p => p.idPeticion !== params.data.idPeticion));
+                            }
+                            
+                        }).catch(error => {
+                            console.error("Error deleting vacation request:", error);
+                        });
+
                     } catch (error) {
                         console.error("Error deleting vacation request:", error);
                     }
@@ -110,7 +117,7 @@ export default function AdminPeticionVacaciones() {
                         size="small"
                         onClick={handleDelete}
                     >
-                        <DeleteIcon fontSize="small" sx={{color:'#505050'}} />
+                        <DeleteIcon fontSize="small" sx={{ color: '#505050' }} />
                     </Button>
                 );
             },
@@ -128,14 +135,13 @@ export default function AdminPeticionVacaciones() {
 
     const colDefsDias = [
         { headerName: "Trabajador", field: "usuario.nombre", sortable: true, filter: true, editable: false },
-        { headerName: "Dias disponibles", field: "diasDisponibles", sortable: true, filter: true, editable: false },
+        { headerName: "Dias disponibles", field: "vacacionesDisponibles", sortable: true, filter: true, editable: false },
     ];
 
     const onCellValueChanged = (params) => {
-        console.log("Cell value changed:", params);
         const updatedPeticion = {
             ...params.data,
-            estado: params.newValue
+            estado: params.newValue.toUpperCase()
         };
         Client.updatePeticionVacaciones(updatedPeticion).then(result => {
 
@@ -148,9 +154,9 @@ export default function AdminPeticionVacaciones() {
 
         <Box sx={{ width: '100%', p: 3 }}>
 
-            <Box sx={{ height:'40vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ height: '40vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                 <Typography variant="h5" component="h4" sx={{ mb: 2 }}>Peticiones de Vacaciones</Typography>
-                <div style={{  width: '100%' }}>
+                <div style={{ width: '100%' }}>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={colDefs}
@@ -158,13 +164,14 @@ export default function AdminPeticionVacaciones() {
                         theme={themeQuartz}
                         onCellValueChanged={onCellValueChanged}
                         domLayout='autoHeight'
+                        getRowId={(params) => String(params.data.idPeticion)}
                     />
                 </div>
             </Box>
 
             <Box sx={{ height: '30vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                 <Typography variant="h5" component="h4" sx={{ mb: 2 }}>Dias Disponibles</Typography>
-                <div style={{  width: '100%' }}>
+                <div style={{ width: '100%' }}>
                     <AgGridReact
                         rowData={trabajadores}
                         columnDefs={colDefsDias}
@@ -172,6 +179,7 @@ export default function AdminPeticionVacaciones() {
                         theme={themeQuartz}
                         onCellValueChanged={onCellValueChanged}
                         domLayout='autoHeight'
+                        getRowId={(params) => String(params.data.idTrabajador)}
                     />
                 </div>
             </Box>
