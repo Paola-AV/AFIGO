@@ -21,10 +21,13 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../Context/AuthContext";
 
 export default function Sidebar() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const [loggingOut, setLoggingOut] = React.useState(false);
+  const { user, logout } = useAuth();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -48,18 +51,37 @@ export default function Sidebar() {
     toggleDrawer(false)();
   };
 
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      // Llama a tu API /api/auth/logout y limpia el contexto + sessionStorage
+      await logout();
+    } catch (e) {
+      // opcional: mostrar toast / alert
+      console.error('Error al cerrar sesión', e);
+    } finally {
+      setLoggingOut(false);
+      toggleDrawer(false)();
+
+      navigate(`/`);
+    }
+  };
+
+
   const DrawerList = (
     <Box sx={{ width: 280, backgroundColor: '#505254', height: '100%', display: 'flex', flexDirection: 'column' }} role="presentation">
       <Box sx={{ p: 2, backgroundColor: '#505254', color: 'white' }}>
         <h3 style={{ margin: 0 }}>AFIGO</h3>
       </Box>
-      
+
       <List sx={{ flex: 1, backgroundColor: '#505254' }}>
         {menuItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <ListItemButton 
+            <ListItemButton
               onClick={() => handleNavigation(item.path)}
-              sx={{ 
+              sx={{
                 backgroundColor: '#505254',
                 color: 'white',
                 '&:hover': { backgroundColor: '#3d3f40' }
@@ -68,7 +90,7 @@ export default function Sidebar() {
               <ListItemIcon sx={{ color: 'white' }}>
                 {item.icon}
               </ListItemIcon>
-              <ListItemText 
+              <ListItemText
                 primary={item.label}
                 sx={{ '& .MuiTypography-root': { fontWeight: 500, color: 'white' } }}
               />
@@ -79,14 +101,13 @@ export default function Sidebar() {
 
       <Divider sx={{ backgroundColor: '#3d3f40' }} />
 
+
       <List sx={{ backgroundColor: '#505254' }}>
         <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => {
-              navigate('/');
-              toggleDrawer(false)();
-            }}
-            sx={{ 
+          <ListItemButton
+            onClick={handleLogout}
+            disabled={loggingOut}
+            sx={{
               backgroundColor: '#505254',
               color: 'white',
               '&:hover': { backgroundColor: '#3d3f40' }
@@ -95,13 +116,14 @@ export default function Sidebar() {
             <ListItemIcon sx={{ color: 'white' }}>
               <LogoutIcon />
             </ListItemIcon>
-            <ListItemText 
-              primary="Cerrar Sesión"
+            <ListItemText
+              primary={loggingOut ? "Cerrando..." : "Cerrar Sesión"}
               sx={{ '& .MuiTypography-root': { fontWeight: 500, color: 'white' } }}
             />
           </ListItemButton>
         </ListItem>
       </List>
+
     </Box>
   );
 

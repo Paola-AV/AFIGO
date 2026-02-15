@@ -18,8 +18,8 @@ import CuentasPage from "./Pages/cuentasPage";
 
 function App() {
   return (
-    <>
-    <Nav/>
+
+
       <Routes>
         <Route path="/" element={<LoginPage/>}></Route>
         <Route path="/Inicio" element={<HomePage/>}></Route>
@@ -37,7 +37,7 @@ function App() {
         <Route path="/Inventario" element={<InventarioPage/>}></Route>
         <Route path="/Cuentas" element={<CuentasPage/>}></Route>
       </Routes>    
-    </>
+
   );
 }
 

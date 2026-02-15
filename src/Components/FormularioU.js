@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Container, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Client } from "../Util/Client";
+import { Nav } from "./Nav";
 
 
 export function FormularioU() {
@@ -59,6 +60,7 @@ export function FormularioU() {
     };
 
     return (
+        <><Nav></Nav>
         <Container maxWidth="sm">
             <Box sx={{ py: 4 }}>
                 {/* Botón regresar */}
@@ -88,8 +90,7 @@ export function FormularioU() {
                             name="nombre"
                             value={formData.nombre}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <TextField
                             fullWidth
@@ -97,8 +98,7 @@ export function FormularioU() {
                             name="direccion"
                             value={formData.direccion}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <FormControl fullWidth>
                             <InputLabel>Usuario administrador</InputLabel>
@@ -119,8 +119,7 @@ export function FormularioU() {
                             name="nombreDeUsuario"
                             value={formData.nombreDeUsuario}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <TextField
                             fullWidth
@@ -129,8 +128,7 @@ export function FormularioU() {
                             type="password"
                             value={formData.contrasenia}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <Button
                             type="submit"
@@ -149,6 +147,6 @@ export function FormularioU() {
                     </Box>
                 </Paper>
             </Box>
-        </Container>
+        </Container></>
     );
 }

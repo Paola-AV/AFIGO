@@ -5,6 +5,7 @@ import App from './App';
 import { BrowserRouter } from "react-router-dom";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { provideGlobalGridOptions } from 'ag-grid-community';
+import { AuthProvider } from "./Context/AuthContext";
 
 // Register all Community features for ag-grid
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -46,7 +47,10 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <React.StrictMode>
-      <App />
+       <AuthProvider>
+              <App />
+       </AuthProvider>
+
     </React.StrictMode>
   </BrowserRouter>
 );

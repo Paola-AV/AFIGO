@@ -96,12 +96,10 @@ export default function AdminPeticionVacaciones() {
                     try {
                         console.log("Attempting to delete vacation request with ID:", params);
                         Client.deletePeticionVacaciones(params.data.idPeticion).then(result => {
-                            console.log("Vacation request deleted successfully:", result);
-                            if (result.ok || result === 204) {
-                                console.log("Removing vacation request from UI with ID:", params.data.idPeticion);
-                                setPeticionVacaciones(prev => prev.filter(p => p.idPeticion !== params.data.idPeticion));
-                            }
-                            
+
+                            setPeticionVacaciones(prev => prev.filter(p => p.idPeticion !== params.data.idPeticion));
+
+
                         }).catch(error => {
                             console.error("Error deleting vacation request:", error);
                         });

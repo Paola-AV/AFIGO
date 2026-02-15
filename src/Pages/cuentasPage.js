@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import { Box, Typography } from '@mui/material';
 import { themeQuartz } from "ag-grid-community";
+import { Nav } from "../Components/Nav";
 
 
 export default function CuentasPage() { 
@@ -38,6 +39,7 @@ export default function CuentasPage() {
     };
 
     return (
+        <><Nav></Nav>
         <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '90vh', p: 3 }}>
 
             <Box sx={{ mb: 3 }}>
@@ -54,13 +56,12 @@ export default function CuentasPage() {
                         columnDefs={colDefs}
                         defaultColDef={defaultColDef}
                         theme={themeQuartz}
-                        domLayout='autoHeight'
-                    />
+                        domLayout='autoHeight' />
                 </div>
             </Box>
 
 
-        </Box>
+        </Box></>
 
     );
 }

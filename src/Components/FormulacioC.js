@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Nav } from "./Nav";
 
 export function FormularioC() {
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ export function FormularioC() {
     };
 
     return (
+        <><Nav></Nav>
         <Container maxWidth="sm">
             <Box sx={{ py: 4 }}>
                 {/* Botón regresar */}
@@ -56,8 +58,7 @@ export function FormularioC() {
                             name="cliente"
                             value={formData.cliente}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <TextField
                             fullWidth
@@ -65,8 +66,7 @@ export function FormularioC() {
                             name="productoQty"
                             value={formData.productoQty}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <TextField
                             fullWidth
@@ -76,8 +76,7 @@ export function FormularioC() {
                             onChange={handleChange}
                             variant="outlined"
                             multiline
-                            rows={3}
-                        />
+                            rows={3} />
 
                         <TextField
                             fullWidth
@@ -85,14 +84,13 @@ export function FormularioC() {
                             name="contacto"
                             value={formData.contacto}
                             onChange={handleChange}
-                            variant="outlined"
-                        />
+                            variant="outlined" />
 
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ 
+                            sx={{
                                 backgroundColor: '#FF5A00',
                                 '&:hover': { backgroundColor: '#CF4C05' },
                                 py: 1.5,
@@ -105,6 +103,6 @@ export function FormularioC() {
                     </Box>
                 </Paper>
             </Box>
-        </Container>
+        </Container></>
     );
 }
