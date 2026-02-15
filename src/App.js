@@ -10,6 +10,11 @@ import HomePage from "./Pages/homePage";
 import Pedidos from "./Components/pedidos";
 import VacacionesPage from "./Pages/vacacionesPage";
 import FormularioVacaciones from "./Components/FormularioVacaciones";
+import FacturasPage from "./Pages/facturasPage";
+import GastosPage from "./Pages/gastosPage";
+import VentasPage from "./Pages/ventasPage";
+import InventarioPage from "./Pages/inventarioPage";
+import CuentasPage from "./Pages/cuentasPage";
 
 function App() {
   return (
@@ -26,6 +31,11 @@ function App() {
         <Route path="/Pedidos" element={<Pedidos/>}></Route>
         <Route path="/Vacaciones" element={<VacacionesPage/>}></Route>
         <Route path="/PeticionVacaciones" element={<FormularioVacaciones/>}></Route>
+        <Route path="/Facturas" element={<FacturasPage/>}></Route>
+        <Route path="/Gastos" element={<GastosPage/>}></Route>
+        <Route path="/Ventas" element={<VentasPage/>}></Route>
+        <Route path="/Inventario" element={<InventarioPage/>}></Route>
+        <Route path="/Cuentas" element={<CuentasPage/>}></Route>
       </Routes>    
     </>
   );

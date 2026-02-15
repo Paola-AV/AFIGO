@@ -5,7 +5,6 @@ import App from './App';
 import { BrowserRouter } from "react-router-dom";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { provideGlobalGridOptions } from 'ag-grid-community';
-import { clear } from '@testing-library/user-event/dist/cjs/utility/clear.js';
 
 // Register all Community features for ag-grid
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -30,6 +29,11 @@ provideGlobalGridOptions({
         lessThan: 'Menor que',
         lessThanOrEqual: 'Menor o igual que',
         inRange: 'En rango',
+        blank: 'En blanco',
+        notBlank: 'No en blanco',
+        before: 'Antes de',
+        after: 'Después de',
+
         
         // Operadores lógicos
         filterType: 'Tipo de filtro',
