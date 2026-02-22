@@ -4,35 +4,39 @@ import { AgGridReact } from 'ag-grid-react';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
-import { Client } from "../Util/Client";
-import CellEditor from "./cellEditor";
-import { ResetTvOutlined } from "@mui/icons-material";
+import { Client } from "../Util/client";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { use } from "react";
 
 export default function UserPeticionVacaciones(props) {
     const navigate = useNavigate();
-    const [rowData, setRowData] = useState([]);
     const [peticionVacaciones, setPeticionVacaciones] = useState([]);
     const [trabajador, setTrabajador] = useState(null);
+    const userId = props.user?.userId;
 
     useEffect(() => {
-        Client.getPeticionVacacionesByTrabajadorId(2).then(data => {
-            setPeticionVacaciones(data);
-            console.log("Vacation requests fetched successfully:", data);
-        }).catch(error => {
-            console.error("Error obteniendo vacaciones:", error);
-        });
-    }, []);
-
-    useEffect(() => {
-        Client.getTrabajadorById(2).then(data => {
+        if(userId){
+        Client.getTrabajadorByUsuarioId(props.user.userId).then(data => {
             setTrabajador(data);
             console.log("Trabajadores fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo trabajadores:", error);
         });
+    }
+    }, [userId]);
 
-    }, []);
+    useEffect(() => {
+        if(trabajador){
+        Client.getPeticionVacacionesByTrabajadorId(trabajador.idTrabajador).then(data => {
+            setPeticionVacaciones(data);
+            console.log("Vacation requests fetched successfully:", data);
+        }).catch(error => {
+            console.error("Error obteniendo vacaciones:", error);
+        });
+    }
+    }, [trabajador]);
+
+    
 
     const colDefs = [
         { headerName: "Inicio", field: "fechaInicio", sortable: true, filter: true, editable: false },

@@ -262,6 +262,9 @@ export class Client {
         return this.get(`Venta`);
     }
 
+    getVentaByIdTrabajador(id) {
+        return this.get(`Venta/${id}`);
+    }
     //urls para detalles de venta
     static getDetallesVenta() {
         return this.get(`VentaDetalle`);
@@ -292,7 +295,10 @@ export class Client {
         // Tu endpoint: POST /api/auth/logout (requiere cookie)
         return this.post("Auth/logout", {}); // backend hace SignOut y devuelve 200
     }
-
+    static async register(usuario) {
+        
+        return this.post("Auth/register", usuario);
+    }
 
 
 }

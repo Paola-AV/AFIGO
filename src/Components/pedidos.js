@@ -5,7 +5,7 @@ import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
 import { Nav } from "./Nav";
-
+import { Client } from "../Util/client";
 
 
 export default function Pedidos() {
@@ -14,20 +14,25 @@ export default function Pedidos() {
     const [rowData, setRowData] = useState([]);
 
     useEffect(() => {
-        setRowData([
-            { vendedor: "Juan Perez", cliente: "Empresa A", producto: "Producto 1", factura: "5552965", cantidad: 10, envio: "Encomienda", direccion: "Direccion 1" },
-            { vendedor: "Maria Lopez", cliente: "Empresa B", producto: "Producto 2", factura: "5552966", cantidad: 5, envio: "Encomienda", direccion: "Direccion 2" }
-        ]);
-    }, []);
+            Client.getPedidos().then(data => {
+                setRowData(data);   
+                console.log("Pedidos fetched successfully:", data);
+            }).catch(error => {
+                console.error("Error obteniendo pedidos:", error);
+            });
+        }, []);
 
     const colDefs = [
         { headerName: "Vendedor", field: "vendedor", sortable: true, filter: true },
-        { headerName: "Cliente", field: "cliente", sortable: true, filter: true },
-        { headerName: "Factura", field: "factura", sortable: true, filter: true },
-        { headerName: "Producto", field: "producto", sortable: true, filter: true },
+        { headerName: "Cliente", field: "nombreCliente", sortable: true, filter: true },
+        { headerName: "Factura Electronica", field: "facturaElectronica", sortable: true, filter: true },
+        { headerName: "Detalle Factura", field: "detalleFactura", sortable: true, filter: true },
+        { headerName: "urgenciaEnvio", field: "urgenciaEnvio", sortable: true, filter: true },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
-        { headerName: "Envio", field: "envio", sortable: true, filter: true },
-        { headerName: "Dirección", field: "direccion", sortable: true, filter: true }
+        { headerName: "Estado", field: "estado", sortable: true, filter: true },
+        { headerName: "Metodo Envio", field: "metodoEnvio", sortable: true, filter: true},
+        { headerName: "Dirección", field: "direccionEnvio", sortable: true, filter: true },
+        { headerName: "Fecha Pedido", field: "fechaPedido", sortable: true, filter: true },
     ];
 
     const defaultColDef = {

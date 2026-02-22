@@ -27,7 +27,7 @@ export default function Sidebar() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = React.useState(false);
-  const { user, logout } = useAuth();
+  const { isAdmin, logout } = useAuth();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -36,14 +36,22 @@ export default function Sidebar() {
   const menuItems = [
     { label: 'Inicio', icon: <HomeIcon />, path: '/Inicio' },
     { label: 'Cotizaciones', icon: <RequestQuoteIcon />, path: '/Cotizacion' },
-    { label: 'Cuentas Por Pagar', icon: <PaymentIcon />, path: '/Cuentas' },
+
+    ...(isAdmin
+      ? [{ label: 'Cuentas Por Pagar', icon: <PaymentIcon />, path: '/Cuentas' }]
+      : []),
+
     { label: 'Facturas', icon: <ReceiptIcon />, path: '/Facturas' },
     { label: 'Gastos', icon: <AttachMoneyIcon />, path: '/Gastos' },
     { label: 'Inventario', icon: <InventoryIcon />, path: '/Inventario' },
     { label: 'Pedidos', icon: <LocalShippingIcon />, path: '/Pedidos' },
-    { label: 'Usuarios', icon: <AccountCircleIcon />, path: '/Usuarios' },
+
+    ...(isAdmin
+      ? [{ label: 'Usuarios', icon: <AccountCircleIcon />, path: '/Usuarios' }]
+      : []),
+
     { label: 'Vacaciones', icon: <EventNoteIcon />, path: '/Vacaciones' },
-    { label: 'Ventas', icon: <PointOfSaleIcon />, path: '/Ventas' },
+    { label: 'Ventas', icon: <PointOfSaleIcon />, path: '/Ventas' }
   ];
 
   const handleNavigation = (path) => {

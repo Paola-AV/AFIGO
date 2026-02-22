@@ -16,20 +16,14 @@ export default function Usuarios() {
     useEffect(() => {
         Client.getUsuarios().then(data => {
             setRowData(data);
-            console.log(data);
         });
     }, []);
 
-    useEffect(() => {
-        console.log("AuthContext user:", user);
-        console.log("isAuthenticated:", isAuthenticated);
-        console.log("isAdmin:", isAdmin);
-    }, [user, isAuthenticated, isAdmin]);
-
     const colDefs = [
         { headerName: "Nombre", field: "nombre", sortable: true, filter: true },
-        { headerName: "Dirección", field: "direccion", sortable: true, filter: true },
+        { headerName: "Correo Electrónico", field: "correo", sortable: true, filter: true },
         { headerName: "Usuario", field: "nombreDeUsuario", sortable: true, filter: true },
+         { headerName: "Admin", field: "usuarioAdmin", sortable: true, filter: true, valueFormatter: params => params.value === 1 ? 'Sí' : 'No' },
     ];
 
     const defaultColDef = {

@@ -4,7 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { Box, Button, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
-import { Client } from "../Util/Client";
+import { Client } from "../Util/client";
 import CellEditor from "./cellEditor";
 import { ResetTvOutlined } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';

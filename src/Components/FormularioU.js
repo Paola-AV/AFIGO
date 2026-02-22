@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Container, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Client } from "../Util/Client";
+import { Client } from "../Util/client";
 import { Nav } from "./Nav";
+
 
 
 export function FormularioU() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        userId:3,
         nombre: '',
-        direccion: '',
-        usuarioAdmin: 'No',
-        nombreDeUsuario: '',
-        contrasenia: ''
+        correo: '',
+        isAdmin: '',
+        nombreUsuario: '',
+        password: ''
     });
 
     const handleChange = (e) => {
@@ -37,17 +37,18 @@ export function FormularioU() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-            if (!formData.nombre || !formData.direccion || !formData.nombreDeUsuario || !formData.contrasenia) {
+            if (!formData.nombre || !formData.correo || !formData.nombreUsuario || !formData.password) {
             alert('Por favor, complete todos los campos obligatorios.');
             
             return;
             }
-            if (formData.usuarioAdmin === 'Si'){
-                formData.usuarioAdmin = 0;
+            if (formData.isAdmin === 'Si'){
+                formData.isAdmin = true;
             }else{
-                formData.usuarioAdmin = 1;
+                formData.isAdmin = false;
             }
-        Client.createUsuario(formData).then(result => {
+
+        Client.register(formData).then(result => {
             e.preventDefault()
             console.log('User creation result:', result);
             if (result ) {
@@ -94,17 +95,17 @@ export function FormularioU() {
 
                         <TextField
                             fullWidth
-                            label="Dirección"
-                            name="direccion"
-                            value={formData.direccion}
+                            label="Correo Electrónico"
+                            name="correo"
+                            value={formData.correo}
                             onChange={handleChange}
                             variant="outlined" />
 
                         <FormControl fullWidth>
                             <InputLabel>Usuario administrador</InputLabel>
                             <Select
-                                name="usuarioAdmin"
-                                value={formData.usuarioAdmin}
+                                name="isAdmin"
+                                value={formData.isAdmin}
                                 onChange={handleSelectChange}
                                 label="Usuario administrador"
                             >
@@ -116,17 +117,17 @@ export function FormularioU() {
                         <TextField
                             fullWidth
                             label="Nombre de usuario"
-                            name="nombreDeUsuario"
-                            value={formData.nombreDeUsuario}
+                            name="nombreUsuario"
+                            value={formData.nombreUsuario}
                             onChange={handleChange}
                             variant="outlined" />
 
                         <TextField
                             fullWidth
                             label="Contraseña"
-                            name="contrasenia"
+                            name="password"
                             type="password"
-                            value={formData.contrasenia}
+                            value={formData.password}
                             onChange={handleChange}
                             variant="outlined" />
 

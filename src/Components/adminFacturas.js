@@ -2,26 +2,52 @@ import React, { useEffect, useState } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import { Box, Typography } from '@mui/material';
 import { themeQuartz } from "ag-grid-community";
+import { Client } from "../Util/client";
 
 export default function AdminFacturas() {
 
     const [rowData, setRowData] = useState([]);
+    const [clientes, setClientes] = useState([]);
+    const [facturas, setFacturas] = useState([]);
 
     useEffect(() => {
-        setRowData([
-            { numFactura: "5552965", estado: "Pendiente", sucursal: "Sucursal 1", fecha: "2024-01-01", cliente: "Empresa A" },
-            { numFactura: "5552966", estado: "Pagada", sucursal: "Sucursal 2", fecha: "2024-01-02", cliente: "Empresa B" },
-            { numFactura: "0569874", estado: "Pendiente", sucursal: "Sucursal 1", fecha: "2024-01-01", cliente: "Empresa A" },
-            { numFactura: "7742966", estado: "Pagada", sucursal: "Sucursal 2", fecha: "2024-01-02", cliente: "Empresa B" }
-        ]);
-    }, []);
+            Client.getFacturas().then(data => {
+                setFacturas(data);   
+            }).catch(error => {
+                console.error("Error obteniendo facturas:", error);
+            });
+        }, []);
+
+     useEffect(() => {
+        if (facturas.length > 0) {
+            Client.getClientes().then(data => {
+                setClientes(data);   
+            }).catch(error => {
+                console.error("Error obteniendo clientes:", error);
+            });
+        }
+        }, [facturas]);
+
+    useEffect(() => {
+        if (facturas.length > 0 && clientes.length > 0) {
+            const updatedFacturas = facturas.map(factura => {
+                const cliente = clientes.find(c => c.idCliente === factura.idCliente);
+                console.log("Factura:", factura, "Cliente encontrado:", cliente);
+                return {
+                    ...factura,
+                    cliente: cliente ? cliente.primerNombre + " " + cliente.primerApellido : "Cliente no encontrado"
+                };
+            });
+            setRowData(updatedFacturas);
+        }
+    }, [facturas, clientes]);
 
     const colDefs = [
-        { headerName: "Numero", field: "numFactura", sortable: true, filter: true },
+        { headerName: "Numero", field: "numero", sortable: true, filter: true },
         { headerName: "Estado", field: "estado", sortable: true, filter: true },
         { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true },
         { headerName: "Fecha", field: "fecha", sortable: true, filter: true },
-        { headerName: "Cliente", field: "cliente", sortable: true, filter: true },
+        { headerName: "Cliente", field: "cliente", sortable: true, filter: true,  },
 
     ];
 
