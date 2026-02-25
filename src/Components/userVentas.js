@@ -9,7 +9,7 @@ export default function UserVentas() {
     const { user } = useAuth();
     const [ventas, setVentas] = useState([]);
     const [clientes, setClientes] = useState([]);
-    const [trabajadores, setTrabajadores] = useState([]);
+    const [trabajador, setTrabajador] = useState(null);
     const [productos, setProductos] = useState([]);
     const [usuarios, setUsuarios] = useState([]);
     const [rowData, setRowData] = useState([]);
@@ -25,7 +25,8 @@ export default function UserVentas() {
     useEffect(() => {
         if (usuarioTrabajador) {
             Client.getTrabajadorByUsuarioId(usuarioTrabajador.userId).then(data => {
-                setTrabajadores(data);
+                setTrabajador(data);
+                console.log("Trabajadores:", data);
             }).catch(error => {
                 console.error("Error obteniendo trabajadores:", error);
             });
@@ -35,52 +36,82 @@ export default function UserVentas() {
     useEffect(() => {
         Client.getProductos().then(data => {
             setProductos(data);
+            console.log("Productos:", data);
         }).catch(error => {
             console.error("Error obteniendo productos:", error);
         });
     }, []);
 
     useEffect(() => {
-        if (trabajadores.length > 0 && usuarioTrabajador) {
-            Client.getVentaByIdTrabajador(usuarioTrabajador.idTrabajador).then(data => {
+        if (trabajador && trabajador.idTrabajador) {
+            console.log("Trabajador ID:", trabajador.idTrabajador);
+            Client.getVentaByIdTrabajador(trabajador.idTrabajador).then(data => {
                 setVentas(data);
+                console.log("Ventas:", data);
             }).catch(error => {
                 console.error("Error obteniendo ventas:", error);
             });
         }
-    }, [trabajadores, usuarioTrabajador]);
+    }, [trabajador]);
 
     useEffect(() => {
         Client.getClientes().then(data => {
             setClientes(data);
+            console.log("Clientes:", data);
         }).catch(error => {
             console.error("Error obteniendo clientes:", error);
         });
     }, []);
 
 
-    //deberia ser por cada detalle una venta, ventas se repiten
+
     useEffect(() => {
-           if (trabajadores.length > 0 && clientes.length > 0 && ventas.length > 0 && productos.length > 0 && usuarios.length > 0) {
-            console.log(ventas)
-                   const updatedVentas = ventas.map(venta => {
-                       const cliente = clientes.find(c => c.idCliente === venta.idCliente);
-                       const trabajador = trabajadores.find(t => t.idTrabajador === venta.idTrabajador);
-                       const user = usuarios.find(u => u.userId === trabajador.idUsuario);
-                       const producto = productos.find(p => p.idProducto === venta.detalle.idProducto);
-                       return {
-                           
-                           ...venta,
-                           venta: venta ? venta : "Venta no encontrada",
-                           cliente: cliente ? cliente.primerNombre + " " + cliente.primerApellido : "Cliente no encontrado",
-                           trabajador: trabajador ? trabajador.primerNombre + " " + trabajador.primerApellido : "Trabajador no encontrado",
-                           usuario: user ? user.nombre : "Usuario no encontrado",
-                           producto: producto ? producto : "Producto no encontrado"
-                       };
-                   });
-                   setRowData(updatedVentas);
-               }
-       }, [ventas, clientes, trabajadores, productos, usuarios]);
+        if (!(trabajador?.idTrabajador && clientes.length && productos.length && ventas.length)) {
+            setRowData([]);
+            return;
+        }
+
+        const vendedor =
+            `${trabajador?.primerNombre ?? ""} ${trabajador?.primerApellido ?? ""}`.trim() || "Vendedor";
+
+        const filas = [];
+
+        for (const venta of ventas) {
+            const cliente = clientes.find((c) => c.idCliente === venta.idCliente);
+            const nombreCliente = cliente
+                ? `${cliente.primerNombre ?? ""} ${cliente.primerApellido ?? ""}`.trim()
+                : "Cliente no encontrado";
+
+            // Normaliza detalles: soporta venta.detalles (array) o venta.detalle (objeto)
+            const detalles = Array.isArray(venta.ventaDetalles)
+                ? venta.ventaDetalles
+                : venta.ventaDetalles
+                    ? [venta.ventaDetalles]
+                    : [];
+
+            for (const det of detalles) {
+                const producto = productos.find((p) => p.idProducto === det.idProducto);
+
+                filas.push({
+                    // campos simples
+                    cantidad: det.cantidad ?? 0,
+                    usuario: user?.nombre ?? vendedor, // toma del contexto si existe
+                    cliente: nombreCliente,
+
+                    // campos anidados para valueGetter
+                    producto: producto || null,
+                    venta: venta || null,
+
+                    // opcional: id estable por fila (venta + producto)
+                    id: `${venta.idVenta ?? venta.numFactura ?? Math.random()}-${det.idProducto}`,
+                });
+            }
+        }
+
+        setRowData(filas);
+        console.log("RowData (por detalle):", filas);
+    }, [ventas, clientes, productos, trabajador, user]);
+
 
     const colDefs = [
         { headerName: "Producto", field: "producto.nombre", sortable: true, filter: true },

@@ -37,7 +37,6 @@ export default function GastosPage() {
             }));
 
             setTotalGastos(resultado);
-            console.log("Total Gastos por Sucursal:", resultado);
         }
 
     }, [rowData]);
@@ -70,13 +69,7 @@ export default function GastosPage() {
             }))
         );
         setGastosPorTipo(totales);
-
-        console.log("Mapa (sucursal -> tipo -> total):", totales);
-        console.log("Plano [{sucursal, tipo, total}]:", plano);
     }, [rowData]);
-
-
-
 
 
     const { xAxisData, series } = useMemo(() => {
@@ -111,8 +104,6 @@ export default function GastosPage() {
 
         return { xAxisData: sucursales, series };
     }, [rowData]);
-
-
 
     const colDefs = [
 

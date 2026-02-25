@@ -14,7 +14,7 @@ export default function VentasPage() {
             <Nav></Nav>
             <Box sx={{ display: 'flex', width: '100%', height: '90vh' }}>
 
-                {!isAdmin ? <AdminVentas></AdminVentas> : <UserVentas></UserVentas>}
+                {isAdmin ? <AdminVentas></AdminVentas> : <UserVentas></UserVentas>}
             </Box>
         </>
     );

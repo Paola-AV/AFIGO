@@ -262,7 +262,7 @@ export class Client {
         return this.get(`Venta`);
     }
 
-    getVentaByIdTrabajador(id) {
+    static getVentaByIdTrabajador(id) {
         return this.get(`Venta/${id}`);
     }
     //urls para detalles de venta
