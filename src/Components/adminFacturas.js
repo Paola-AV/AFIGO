@@ -100,9 +100,6 @@ export default function AdminFacturas() {
         }
     }, [rowData]);
 
-
-
-
     return (
 
         <Box sx={{ width: '100%', p: 3 }}>

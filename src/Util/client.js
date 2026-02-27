@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "https://localhost:7122/api/";
+const API_BASE_URL = "http://localhost:5160/api/";
 
 
 // 1) Helper para redirigir en 401 o 403
@@ -164,6 +164,26 @@ export class Client {
         return this.get(`Pedido/cotizacion`);
     }
 
+    //urls para detalle de pedidos
+
+    static getPedidosDetalle() {
+        return this.get(`DetallePedido`);
+    }
+
+    static getDetallePedidoById(id) {
+        return this.get(`DetallePedido/${id}`);
+    }
+
+    static createDetallePedido(detallePedido) {
+        return this.post(`DetallePedido`, detallePedido);
+    }
+
+    static updateDetallePedido(detallePedido) {
+        return this.put(`DetallePedido`, detallePedido);
+    }
+    static deleteDetallePedido(id) {
+        return this.delete(`DetallePedido/${id}`);
+    }
     //urls para trabajadores
 
     static getTrabajadores() {

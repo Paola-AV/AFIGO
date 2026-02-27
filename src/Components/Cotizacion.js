@@ -5,8 +5,7 @@ import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
 import { Nav } from "./Nav";
-
-
+import { Client } from "../Util/client";
 
 export function Cotizacion() {
     const navigate = useNavigate();
@@ -14,10 +13,12 @@ export function Cotizacion() {
     const [rowData, setRowData] = useState([]);
 
     useEffect(() => {
-        setRowData([
-            { vendedor: "Juan Perez", cliente: "Empresa A", producto: "Producto 1", cantidad: 10, descripcion: "Descripcion del producto 1", contacto: "Contacto 1" },
-            { vendedor: "Maria Lopez", cliente: "Empresa B", producto: "Producto 2", cantidad: 5, descripcion: "Descripcion del producto 2", contacto: "Contacto 2" }
-        ]);
+        Client.getPedidoCotizacion().then(data => {
+            setRowData(data);
+            console.log("Cotizaciones fetched successfully:", data);
+        }).catch(error => {
+            console.error("Error obteniendo cotizaciones:", error);
+        });
     }, []);
 
     const colDefs = [
@@ -35,35 +36,35 @@ export function Cotizacion() {
         minWidth: 100,
         filter: true,
         filterParams: {
-            buttons: ['clear'],  
+            buttons: ['clear'],
         }
     };
 
     return (
         <>
-        <Nav></Nav>
-        <Box sx={{ width: '100%', p: 3 }}>
-            <Box sx={{ mb: 3 }}>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => navigate('/formularioCotizacion')}
-                    sx={{ backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }}
-                >
-                    Nueva Cotización
-                </Button>
-            </Box>
+            <Nav></Nav>
+            <Box sx={{ width: '100%', p: 3 }}>
+                <Box sx={{ mb: 3 }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => navigate('/formularioCotizacion')}
+                        sx={{ backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }}
+                    >
+                        Nueva Cotización
+                    </Button>
+                </Box>
 
-            <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: '100%' }}>
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={colDefs}
-                        defaultColDef={defaultColDef}
-                        theme={themeQuartz} />
-                </div>
+                <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: '100%' }}>
+                        <AgGridReact
+                            rowData={rowData}
+                            columnDefs={colDefs}
+                            defaultColDef={defaultColDef}
+                            theme={themeQuartz} />
+                    </div>
+                </Box>
             </Box>
-        </Box>
         </>
     );
 }

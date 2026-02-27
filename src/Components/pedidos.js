@@ -14,13 +14,13 @@ export default function Pedidos() {
     const [rowData, setRowData] = useState([]);
 
     useEffect(() => {
-            Client.getPedidos().then(data => {
-                setRowData(data);   
-                console.log("Pedidos fetched successfully:", data);
-            }).catch(error => {
-                console.error("Error obteniendo pedidos:", error);
-            });
-        }, []);
+        Client.getPedidoTipo().then(data => {
+            setRowData(data);
+            console.log("Pedidos fetched successfully:", data);
+        }).catch(error => {
+            console.error("Error obteniendo pedidos:", error);
+        });
+    }, []);
 
     const colDefs = [
         { headerName: "Vendedor", field: "vendedor", sortable: true, filter: true },
@@ -30,7 +30,7 @@ export default function Pedidos() {
         { headerName: "urgenciaEnvio", field: "urgenciaEnvio", sortable: true, filter: true },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
         { headerName: "Estado", field: "estado", sortable: true, filter: true },
-        { headerName: "Metodo Envio", field: "metodoEnvio", sortable: true, filter: true},
+        { headerName: "Metodo Envio", field: "metodoEnvio", sortable: true, filter: true },
         { headerName: "Dirección", field: "direccionEnvio", sortable: true, filter: true },
         { headerName: "Fecha Pedido", field: "fechaPedido", sortable: true, filter: true },
     ];
