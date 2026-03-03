@@ -39,13 +39,39 @@ export default function InventarioPage() {
         { headerName: "Producto", field: "producto.nombre", sortable: true, filter: true },
         { headerName: "Familia", field: "producto.familia", sortable: true, filter: true },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
-        { headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true, filter: true },
-        { headerName: "Precio Venta", field: "producto.precioVenta", sortable: true, filter: true },
+        {
+            headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true, filter: true,
+            valueFormatter: params => {
+                if (!params.value) return '';
+                return params.value.split('T')[0];
+            }
+        },
+        {
+            headerName: "Precio Venta", field: "producto.precioVenta", sortable: true, filter: true, valueFormatter: (params) => {
+                const value = Number(params.value);
+                if (isNaN(value)) return "₡0.00";
+
+                return "₡" + value.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        },
     ];
 
     const adminCols = isAdmin
         ? [
-            { headerName: "Precio Costo", field: "producto.precioCosto", sortable: true, filter: true },
+            {
+                headerName: "Precio Costo", field: "producto.precioCosto", sortable: true, filter: true, valueFormatter: (params) => {
+                    const value = Number(params.value);
+                    if (isNaN(value)) return "₡0.00";
+
+                    return "₡" + value.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
+            },
         ]
         : [];
 
@@ -73,15 +99,20 @@ export default function InventarioPage() {
 
                 </Box>
 
-                <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                    <div style={{ width: '100%' }}>
+                <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         <AgGridReact
                             rowData={inventarioConProductos}
                             columnDefs={colDefs}
                             defaultColDef={defaultColDef}
                             theme={themeQuartz}
-                            domLayout='autoHeight' />
+                            // IMPORTANTE: no usar 'autoHeight' si se necesita scrollbar
+                            // domLayout='autoHeight'
+                            domLayout="normal"
+                        />
                     </div>
+
                 </Box>
 
 

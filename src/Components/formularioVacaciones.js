@@ -9,6 +9,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Nav } from "./Nav";
 import { useAuth } from "../Context/AuthContext";
+import dayjs from 'dayjs'; 
+dayjs.locale('es');   
+
 
 export default function FormularioVacaciones() {
   const navigate = useNavigate();

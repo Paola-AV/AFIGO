@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useMemo } from "react";
 import { AgGridReact } from 'ag-grid-react';
 import { Box, Typography } from '@mui/material';
@@ -6,22 +7,51 @@ import { Nav } from "../Components/Nav";
 import { Client } from "../Util/client";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { BarChart } from '@mui/x-charts/BarChart';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+dayjs.locale('es');
+
 
 export default function GastosPage() {
     const [rowData, setRowData] = useState([]);
+    const [graficoData, setGraficoData] = useState([]);
     const [totalGastos, setTotalGastos] = useState([]);
     const [gastosPorTipo, setGastosPorTipo] = useState([]);
+    const [dateFilter, setDateFilter] = useState(null);
 
     useEffect(() => {
         Client.getGastos().then(data => {
             setRowData(data);
+            setGraficoData(data);
         });
     }, []);
 
     useEffect(() => {
-        if (rowData.length > 0) {
+        if (!dateFilter) return;
+        if (dateFilter) {
+            setGraficoData(prev => filtrarDesde(prev, dateFilter));
+        }
+    }, [dateFilter]);
 
-            const agregados = rowData.reduce((acc, item) => {
+
+    const filtrarDesde = (data, dateFilter) => {
+        const from = dayjs(dateFilter).startOf('day');
+        return (Array.isArray(data) ? data : []).filter(item => {
+            if (!item?.fecha) return false;
+            const d = dayjs(item.fecha);
+            return d.isValid() && (d.isAfter(from) || d.isSame(from, 'day'));
+        });
+    };
+
+
+    useEffect(() => {
+        if (graficoData.length > 0) {
+
+            const agregados = graficoData.reduce((acc, item) => {
                 const nombre = item?.sucursal ?? 'Sin Sucursal';
                 const monto = Number(item?.monto) || 0;
 
@@ -39,16 +69,16 @@ export default function GastosPage() {
             setTotalGastos(resultado);
         }
 
-    }, [rowData]);
+    }, [graficoData]);
 
     useEffect(() => {
-        if (!rowData?.length) {
+        if (!graficoData?.length) {
             setGastosPorTipo([]);
             return;
         }
 
         // Agrupar por sucursal y tipo
-        const totales = rowData.reduce((acc, item) => {
+        const totales = graficoData.reduce((acc, item) => {
             const sucursal = item?.sucursal ?? 'Sin Sucursal';
             const tipo = item?.tipo ?? 'Sin Tipo';
             const monto = Number(item?.monto) || 0;
@@ -69,14 +99,14 @@ export default function GastosPage() {
             }))
         );
         setGastosPorTipo(totales);
-    }, [rowData]);
+    }, [graficoData]);
 
 
     const { xAxisData, series } = useMemo(() => {
-        if (!rowData?.length) return { xAxisData: [], series: [] };
+        if (!graficoData?.length) return { xAxisData: [], series: [] };
 
         // 1) sucursal -> tipo -> total
-        const map = rowData.reduce((acc, item) => {
+        const map = graficoData.reduce((acc, item) => {
             const sucursal = item?.sucursal ?? 'Sin Sucursal';
             const tipo = item?.tipo ?? 'Sin Tipo';
             const monto = Number(item?.monto) || 0;
@@ -103,14 +133,29 @@ export default function GastosPage() {
         }));
 
         return { xAxisData: sucursales, series };
-    }, [rowData]);
+    }, [graficoData]);
 
     const colDefs = [
 
         { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true },
         { headerName: "Tipo", field: "tipo", sortable: true, filter: true },
-        { headerName: "Monto", field: "monto", sortable: true, filter: true },
-        { headerName: "Fecha", field: "fecha", sortable: true, filter: true },
+        {
+            headerName: "Monto", field: "monto", sortable: true, filter: true, valueFormatter: (params) => {
+                const value = Number(params.value);
+                if (isNaN(value)) return "₡0.00";
+
+                return "₡" + value.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        },
+        {
+            headerName: "Fecha", field: "fecha", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return '';
+                return params.value.split('T')[0];
+            }
+        },
         { headerName: "Descripcion", field: "descripcion", sortable: true, filter: true }
 
     ];
@@ -127,7 +172,7 @@ export default function GastosPage() {
 
     return (
         <><Nav></Nav>
-            <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '90vh', p: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', p: 3 }}>
 
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="h5" component="h1">
@@ -136,41 +181,58 @@ export default function GastosPage() {
 
                 </Box>
 
-                <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                    <div style={{ width: '100%' }}>
+                <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         <AgGridReact
                             rowData={rowData}
                             columnDefs={colDefs}
                             defaultColDef={defaultColDef}
                             theme={themeQuartz}
-                            domLayout='autoHeight'
+                            domLayout="normal"
                         />
                     </div>
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-                    {/* total gastos by sucursal */}
-                    <Box sx={{ mt: 3 }}>
-                        <PieChart
-                            series={[
-                                {
-                                    data: [...totalGastos],
-                                },
-                            ]}
-                            width={200}
-                            height={360}
-                        />
+
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', flexWrap: 'wrap', mt: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 2, width: {xs:'50%',md:'30%'} }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                            <DatePicker
+                                label="Mostrar desde:"
+                                value={dateFilter}
+                                onChange={setDateFilter}
+                                format="DD/MM/YYYY"
+                                slotProps={{
+                                    textField: { fullWidth: true, required: true },
+                                }}
+                            />
+                        </LocalizationProvider>
                     </Box>
-                    {/* tipo gasto by sucursal barra combinado */}
 
-                    <Box sx={{ mt: 3 }}>
-                        <BarChart
-                            xAxis={[{ data: xAxisData, scaleType: 'band' }]}
-                            series={series}
-                            height={360}
-                            width={600}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-around', flexDirection: { xs: 'column', md: 'row' }, flexWrap: 'wrap', gap: 4, width: '100%' }}>
+                        {/* total gastos by sucursal */}
+                        <Box sx={{ mt: 3 }}>
+                            <PieChart
+                                series={[
+                                    {
+                                        data: [...totalGastos],
+                                    },
+                                ]}
+                               // width={'50%'}
+                                // height={360}
+                            />
+                        </Box>
+                        {/* tipo gasto by sucursal barra combinado */}
 
-                            yAxis={[{ width: 60 }]}
-                        />
+                        <Box sx={{ mt: 3, width: { xs: '100%', md: '70%' }, height: 360 }}>
+                            <BarChart
+                                xAxis={[{ data: xAxisData, scaleType: 'band' }]}
+                                series={series}
+                                 height={360}
+                               // width={'100%'}
+
+                                yAxis={[{ width: 60 }]}
+                            />
+                        </Box>
                     </Box>
                 </Box>
 
