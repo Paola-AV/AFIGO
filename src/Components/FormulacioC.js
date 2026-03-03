@@ -194,7 +194,7 @@ export function FormularioC() {
 
                     <Box sx={{ textAlign: 'center', mb: 4 }}>
                         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#13191D' }}>
-                            Formulario de Pedidos
+                            Formulario de Cotización
                         </Typography>
                     </Box>
 
@@ -203,7 +203,7 @@ export function FormularioC() {
                             
                             {/* SECCIÓN: DATOS DEL PEDIDO */}
                             <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#13191D', mt: 2 }}>
-                                Datos del Pedido
+                                Datos de la cotización
                             </Typography>
 
                             <TextField

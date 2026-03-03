@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:5160/api/";
+const API_BASE_URL = "https://localhost:7122/api/";
 
 
 // 1) Helper para redirigir en 401 o 403
