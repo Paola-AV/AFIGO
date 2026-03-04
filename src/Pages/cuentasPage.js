@@ -14,6 +14,7 @@ export default function CuentasPage() {
     useEffect(() => {
         Client.getCuentas().then(data => {
             setCuentas(data);
+            console.log("Cuentas fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo cuentas:", error);
         });
@@ -111,14 +112,14 @@ export default function CuentasPage() {
 
                 </Box>
 
-                <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                    <div style={{ width: '100%' }}>
+                <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         <AgGridReact
                             rowData={rowData}
                             columnDefs={colDefs}
                             defaultColDef={defaultColDef}
                             theme={themeQuartz}
-                            domLayout='autoHeight' />
+                             domLayout="normal"/>
                     </div>
                 </Box>
 

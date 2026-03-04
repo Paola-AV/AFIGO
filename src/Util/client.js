@@ -305,20 +305,19 @@ export class Client {
     }
 
     //urls para login
-
     static async login(correoOUsuario, password) {
-        // Tu endpoint: POST /api/auth/login (AllowAnonymous)
         return this.post("Auth/login", { correoOUsuario, password });
     }
 
     static async logout() {
-        // Tu endpoint: POST /api/auth/logout (requiere cookie)
-        return this.post("Auth/logout", {}); // backend hace SignOut y devuelve 200
+        return this.post("Auth/logout", {}); 
     }
-    static async register(usuario) {
-        
+    
+    static async register(usuario) { 
         return this.post("Auth/register", usuario);
     }
 
-
+    static async cambiarContrasena(userId, currentPassword, newPassword) { 
+        return this.post("Auth/change-password", { userId, currentPassword, newPassword });
+    }
 }

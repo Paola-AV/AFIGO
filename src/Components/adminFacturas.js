@@ -26,6 +26,7 @@ export default function AdminFacturas() {
         Client.getFacturas().then(data => {
             setFacturas(data);
             setGraficoData(data);
+            console.log("Facturas fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo facturas:", error);
         });
