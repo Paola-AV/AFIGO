@@ -168,12 +168,12 @@ export function FormularioC() {
                 console.log('Detalle creado:', responseDetalle);
             }
 
-            alert('Pedido creado exitosamente');
-            navigate('/Pedidos');
+            alert('Cotizacion creada exitosamente');
+            navigate('/Cotizacion');
 
         } catch (error) {
-            console.error('Error al crear pedido:', error);
-            alert('Error al crear el pedido. Intenta de nuevo.');
+            console.error('Error al crear cotizacion:', error);
+            alert('Error al crear la cotizacion. Intenta de nuevo.');
         }
     };
 
@@ -185,7 +185,7 @@ export function FormularioC() {
                     <Box sx={{ mb: 3 }}>
                         <Button
                             startIcon={<ArrowBackIcon />}
-                            onClick={() => navigate('/Pedidos')}
+                            onClick={() => navigate('/Cotizacion')}
                             sx={{ color: '#13191D', textTransform: 'none', fontSize: '1rem' }}
                         >
                             Atrás

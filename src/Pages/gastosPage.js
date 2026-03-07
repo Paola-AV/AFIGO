@@ -10,7 +10,8 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Fab from '@mui/material/Fab';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 dayjs.locale('es');
@@ -22,6 +23,7 @@ export default function GastosPage() {
     const [totalGastos, setTotalGastos] = useState([]);
     const [gastosPorTipo, setGastosPorTipo] = useState([]);
     const [dateFilter, setDateFilter] = useState(null);
+    const [dateFilterTo, setDateFilterTo] = useState(null);
 
     useEffect(() => {
         Client.getGastos().then(data => {
@@ -31,22 +33,33 @@ export default function GastosPage() {
     }, []);
 
     useEffect(() => {
-        if (!dateFilter) return;
-        if (dateFilter) {
-            setGraficoData(prev => filtrarDesde(prev, dateFilter));
+        if (!rowData.length) return;
+
+        if (dateFilter || dateFilterTo) {
+            setGraficoData(filtrarRango(rowData, dateFilter, dateFilterTo));
+        } else {
+            setGraficoData(rowData); // sin filtro, muestra todo
         }
-    }, [dateFilter]);
+    }, [rowData, dateFilter, dateFilterTo]);
 
 
-    const filtrarDesde = (data, dateFilter) => {
-        const from = dayjs(dateFilter).startOf('day');
+    const filtrarRango = (data, desde, hasta) => {
         return (Array.isArray(data) ? data : []).filter(item => {
             if (!item?.fecha) return false;
             const d = dayjs(item.fecha);
-            return d.isValid() && (d.isAfter(from) || d.isSame(from, 'day'));
+            if (!d.isValid()) return false;
+
+            const despuesDeDesde = desde
+                ? (d.isAfter(dayjs(desde).startOf('day')) || d.isSame(dayjs(desde), 'day'))
+                : true;
+
+            const antesDeHasta = hasta
+                ? (d.isBefore(dayjs(hasta).endOf('day')) || d.isSame(dayjs(hasta), 'day'))
+                : true;
+
+            return despuesDeDesde && antesDeHasta;
         });
     };
-
 
     useEffect(() => {
         if (graficoData.length > 0) {
@@ -170,6 +183,10 @@ export default function GastosPage() {
         }
     };
 
+    const handleDownload = () => {
+        Client.descargarExcelGastos()
+    }
+
     return (
         <><Nav></Nav>
             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', p: 3 }}>
@@ -180,7 +197,9 @@ export default function GastosPage() {
                     </Typography>
 
                 </Box>
-
+                <Fab size="medium" color="secondary" aria-label="add" sx={{ position: 'absolute', top: 100, right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }} onClick={handleDownload} >
+                    <FileDownloadIcon />
+                </Fab>
                 <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         <AgGridReact
@@ -194,41 +213,45 @@ export default function GastosPage() {
                 </Box>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', flexWrap: 'wrap', mt: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 2, width: {xs:'50%',md:'30%'} }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'flex-start', mb: 2, width: '100%' }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                            <DatePicker
-                                label="Mostrar desde:"
-                                value={dateFilter}
-                                onChange={setDateFilter}
-                                format="DD/MM/YYYY"
-                                slotProps={{
-                                    textField: { fullWidth: true, required: true },
-                                }}
-                            />
+
+
+                            <Box sx={{ width: { xs: '100%', md: '30%' } }}>
+                                <DatePicker
+                                    label="Mostrar desde:"
+                                    value={dateFilter}
+                                    onChange={setDateFilter}
+                                    format="DD/MM/YYYY"
+                                    slotProps={{ textField: { fullWidth: true } }}
+                                />
+                            </Box>
+
+                            <Box sx={{ width: { xs: '100%', md: '30%' }, mt: { xs: 2, md: 0 }, ml: { md: 2 } }}>
+                                <DatePicker
+                                    label="Mostrar hasta:"
+                                    value={dateFilterTo}
+                                    onChange={setDateFilterTo}
+                                    format="DD/MM/YYYY"
+                                    minDate={dateFilter ?? undefined}
+                                    slotProps={{ textField: { fullWidth: true } }}
+                                />
+                            </Box>
+
                         </LocalizationProvider>
                     </Box>
 
+
                     <Box sx={{ display: 'flex', justifyContent: 'space-around', flexDirection: { xs: 'column', md: 'row' }, flexWrap: 'wrap', gap: 4, width: '100%' }}>
-                        {/* total gastos by sucursal */}
-                        <Box sx={{ mt: 3 }}>
-                            <PieChart
-                                series={[
-                                    {
-                                        data: [...totalGastos],
-                                    },
-                                ]}
-                               // width={'50%'}
-                                // height={360}
-                            />
-                        </Box>
+
                         {/* tipo gasto by sucursal barra combinado */}
 
                         <Box sx={{ mt: 3, width: { xs: '100%', md: '70%' }, height: 360 }}>
                             <BarChart
                                 xAxis={[{ data: xAxisData, scaleType: 'band' }]}
                                 series={series}
-                                 height={360}
-                               // width={'100%'}
+                                height={360}
+                                // width={'100%'}
 
                                 yAxis={[{ width: 60 }]}
                             />

@@ -112,6 +112,46 @@ export class Client {
         return parseResponse(response);
     }
 
+    static async downloadExcel(uri, suggestedName = "export.xlsx") {
+        const response = await fetch(API_BASE_URL + uri, {
+            method: "GET",
+            // Para Excel el Accept no tiene que ser JSON
+            headers: { "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+            credentials: "include" // mantiene cookies/sesión si tu API las usa
+        });
+
+        await ensureOk(response); // reutiliza tu manejo 401/403/errores
+
+        // Intenta obtener el nombre de archivo del header Content-Disposition
+        const dispo = response.headers.get("Content-Disposition") || "";
+        let fileName = suggestedName;
+        const match = dispo.match(/filename\*?=([^;]+)$/i);
+        if (match) {
+            // Soporta filename* con UTF-8 o filename simple
+            let raw = match[1].trim();
+            // Quita comillas
+            raw = raw.replace(/^UTF-8''/, "").replace(/^["']|["']$/g, "");
+            // decodeURIComponent si viene percent-encoded
+            try { fileName = decodeURIComponent(raw); } catch { fileName = raw; }
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Crea ancla para descargar
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName || suggestedName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        // Limpia el ObjectURL
+        window.URL.revokeObjectURL(url);
+
+        // Devuelve info por si quieres notificar/telemetría
+        return { ok: true, fileName: a.download, size: blob.size, contentType: blob.type };
+    }
 
     //urls para usuarios
 
@@ -157,11 +197,11 @@ export class Client {
     }
 
     static getPedidoTipo() {
-        return this.get(`Pedido/pedido`);
+        return this.get(`Pedido/pedido/detalles`);
     }
 
     static getPedidoCotizacion() {
-        return this.get(`Pedido/cotizacion`);
+        return this.get(`Pedido/cotizacion/detalles`);
     }
 
     //urls para detalle de pedidos
@@ -272,9 +312,17 @@ export class Client {
         return this.get(`Gasto`);
     }
 
+    static descargarExcelGastos() {
+        return this.downloadExcel(`Gasto/excel`, "gastos.xlsx");
+    }
+
     //urls para facturas
     static getFacturas() {
         return this.get(`Factura`);
+    }
+
+    static descargarExcelFacturas() {
+        return this.downloadExcel(`Factura/excel`, "facturas.xlsx");
     }
 
     //urls para ventas
@@ -299,9 +347,16 @@ export class Client {
         return this.get(`Inventario`);
     }
 
+    static descargarExcelInventario() {
+        return this.downloadExcel(`Inventario/excel`, "inventario.xlsx");
+    }
     //urls para cuentas
     static getCuentas() {
         return this.get(`Cuenta`);
+    }
+
+    static descargarExcelCuentas() {
+        return this.downloadExcel(`Cuenta/excel`, "cuentas.xlsx");
     }
 
     //urls para login
@@ -310,14 +365,14 @@ export class Client {
     }
 
     static async logout() {
-        return this.post("Auth/logout", {}); 
+        return this.post("Auth/logout", {});
     }
-    
-    static async register(usuario) { 
+
+    static async register(usuario) {
         return this.post("Auth/register", usuario);
     }
 
-    static async cambiarContrasena(userId, currentPassword, newPassword) { 
+    static async cambiarContrasena(userId, currentPassword, newPassword) {
         return this.post("Auth/change-password", { userId, currentPassword, newPassword });
     }
 }

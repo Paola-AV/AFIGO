@@ -37,18 +37,14 @@ export default function Sidebar() {
     { label: 'Inicio', icon: <HomeIcon />, path: '/Inicio' },
     { label: 'Cotizaciones', icon: <RequestQuoteIcon />, path: '/Cotizacion' },
 
-    ...(isAdmin
-      ? [{ label: 'Cuentas Por Pagar', icon: <PaymentIcon />, path: '/Cuentas' }]
-      : []),
+    ...(isAdmin? [{ label: 'Cuentas Por Pagar', icon: <PaymentIcon />, path: '/Cuentas' }]: []),
+    ...(isAdmin ? [{ label: 'Facturas', icon: <ReceiptIcon />, path: '/Facturas' }] : []),
+    ...(isAdmin ? [{ label: 'Gastos', icon: <AttachMoneyIcon />, path: '/Gastos' }] : []),
 
-    { label: 'Facturas', icon: <ReceiptIcon />, path: '/Facturas' },
-    { label: 'Gastos', icon: <AttachMoneyIcon />, path: '/Gastos' },
     { label: 'Inventario', icon: <InventoryIcon />, path: '/Inventario' },
     { label: 'Pedidos', icon: <LocalShippingIcon />, path: '/Pedidos' },
 
-    ...(isAdmin
-      ? [{ label: 'Usuarios', icon: <AccountCircleIcon />, path: '/Usuarios' }]
-      : []),
+    ...(isAdmin? [{ label: 'Usuarios', icon: <AccountCircleIcon />, path: '/Usuarios' }]: []),
 
     { label: 'Vacaciones', icon: <EventNoteIcon />, path: '/Vacaciones' },
     { label: 'Ventas', icon: <PointOfSaleIcon />, path: '/Ventas' }

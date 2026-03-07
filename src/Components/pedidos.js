@@ -6,37 +6,92 @@ import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
 import { Nav } from "./Nav";
 import { Client } from "../Util/client";
+import { use } from "react";
 
 
 export default function Pedidos() {
     const navigate = useNavigate();
-
     const [rowData, setRowData] = useState([]);
+    const [pedidos, setPedidos] = useState([]);
 
     useEffect(() => {
         Client.getPedidoTipo().then(data => {
-            setRowData(data);
+            setPedidos(data);
             console.log("Pedidos fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo pedidos:", error);
         });
     }, []);
 
+    useEffect(() => {
+        if (pedidos.length > 0) {
+            const newData = [];
+            pedidos.forEach(pedido => {
+                const detalles = pedido.detalles || [];
+                if (detalles.length === 0) {
+                    newData.push({
+                        idPedido: pedido.idPedido,
+                        fechaPedido: pedido.fechaPedido,
+                        estado: pedido.estado,
+                        nombreCliente: pedido.nombreCliente,
+                        facturaElectronica: pedido.facturaElectronica,
+                        detalleFactura: pedido.detalleFactura,
+                        metodoEnvio: pedido.metodoEnvio,
+                        direccionEnvio: pedido.direccionEnvio,
+                        urgenciaEnvio: pedido.urgenciaEnvio,
+                        vendedor: pedido.vendedor,
+                        producto: '',
+                        cantProducto: '',
+                        descripcion: '',
+                        _isFirstRow: true,
+                    });
+                } else {
+                    detalles.forEach((detalle, idx) => {
+                        newData.push({
+                            // Datos del pedido solo en primera fila
+                            idPedido: pedido.idPedido,
+                            fechaPedido: idx === 0 ? pedido.fechaPedido : '',
+                            estado: idx === 0 ? pedido.estado : '',
+                            nombreCliente: idx === 0 ? pedido.nombreCliente : '',
+                            facturaElectronica: idx === 0 ? pedido.facturaElectronica : '',
+                            detalleFactura: idx === 0 ? pedido.detalleFactura : '',
+                            metodoEnvio: idx === 0 ? pedido.metodoEnvio : '',
+                            direccionEnvio: idx === 0 ? pedido.direccionEnvio : '',
+                            urgenciaEnvio: idx === 0 ? pedido.urgenciaEnvio : '',
+                            vendedor: idx === 0 ? pedido.vendedor : '',
+                            // Detalle siempre visible
+                            producto: detalle.nombreProducto,
+                            cantProducto: detalle.cantProducto,
+                            descripcion: detalle.descripcion,
+                            idDetaklle: detalle.idDetalle,
+                            _isFirstRow: idx === 0,
+                        });
+                    });
+                }
+
+            });
+            setRowData(newData);
+        }
+    }, [pedidos]);
+    
     const colDefs = [
-        { headerName: "Vendedor", field: "vendedor", sortable: true, filter: true },
-        { headerName: "Cliente", field: "nombreCliente", sortable: true, filter: true },
-        { headerName: "Factura Electronica", field: "facturaElectronica", sortable: true, filter: true },
-        { headerName: "Detalle Factura", field: "detalleFactura", sortable: true, filter: true },
-        { headerName: "urgenciaEnvio", field: "urgenciaEnvio", sortable: true, filter: true },
-        { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
-        { headerName: "Estado", field: "estado", sortable: true, filter: true },
-        { headerName: "Metodo Envio", field: "metodoEnvio", sortable: true, filter: true },
-        { headerName: "Dirección", field: "direccionEnvio", sortable: true, filter: true },
-        { headerName: "Fecha Pedido", field: "fechaPedido", sortable: true, filter: true },
+        { headerName: "Vendedor", field: "vendedor", filter: true },
+        { headerName: "Cliente", field: "nombreCliente",  filter: true },
+        { headerName: "Factura Electronica", field: "facturaElectronica", filter: true },
+        { headerName: "Detalle Factura", field: "detalleFactura", filter: true },
+        { headerName: "Urgencia Envio", field: "urgenciaEnvio",  filter: true },
+        { headerName: "Producto", field: "nombreProducto",  filter: true },
+        { headerName: "Cantidad", field: "cantProducto",  filter: true },
+        { headerName: "Descripcion", field: "descripcion",  filter: true },
+        { headerName: "Estado", field: "estado",  filter: true },
+        { headerName: "Metodo Envio", field: "metodoEnvio", filter: true },
+        { headerName: "Dirección", field: "direccionEnvio", filter: true },
+        { headerName: "Fecha Pedido", field: "fechaPedido", filter: true },
     ];
 
     const defaultColDef = {
         editable: true,
+        sortable:false,
         flex: 1,
         minWidth: 100,
         filter: true,

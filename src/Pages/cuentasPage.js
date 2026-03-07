@@ -4,6 +4,8 @@ import { Box, Typography } from '@mui/material';
 import { themeQuartz } from "ag-grid-community";
 import { Nav } from "../Components/Nav";
 import { Client } from "../Util/client";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Fab from '@mui/material/Fab';
 
 export default function CuentasPage() {
     const [rowData, setRowData] = useState([]);
@@ -101,6 +103,10 @@ export default function CuentasPage() {
         }
     };
 
+    const handleDownload = () => {
+        Client.descargarExcelCuentas()
+    }
+
     return (
         <><Nav></Nav>
             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '90vh', p: 3 }}>
@@ -111,7 +117,9 @@ export default function CuentasPage() {
                     </Typography>
 
                 </Box>
-
+                <Fab size="medium" color="secondary" aria-label="add" sx={{ position: 'absolute', top: 100, right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }} onClick={handleDownload} >
+                    <FileDownloadIcon />
+                </Fab>
                 <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         <AgGridReact
@@ -119,7 +127,7 @@ export default function CuentasPage() {
                             columnDefs={colDefs}
                             defaultColDef={defaultColDef}
                             theme={themeQuartz}
-                             domLayout="normal"/>
+                            domLayout="normal" />
                     </div>
                 </Box>
 

@@ -5,6 +5,8 @@ import { themeQuartz } from "ag-grid-community";
 import { Nav } from "../Components/Nav";
 import { Client } from "../Util/client";
 import { useAuth } from "../Context/AuthContext"
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Fab from '@mui/material/Fab';
 
 export default function InventarioPage() {
     const [inventario, setInventario] = useState([]);
@@ -87,6 +89,10 @@ export default function InventarioPage() {
         }
     };
 
+    const handleDownload = () => {
+        Client.descargarExcelInventario()
+    }
+
     return (
         <>
             <Nav></Nav>
@@ -98,7 +104,9 @@ export default function InventarioPage() {
                     </Typography>
 
                 </Box>
-
+                <Fab size="medium" color="secondary" aria-label="add" sx={{ position: 'absolute', top: 100, right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }} onClick={handleDownload} >
+                    <FileDownloadIcon />
+                </Fab>
                 <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
 
                     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
