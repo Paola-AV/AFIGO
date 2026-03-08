@@ -52,7 +52,7 @@ export default function AdminFacturas() {
         { headerName: "Estado", field: "estado", sortable: true, filter: true },
         { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true },
         {
-            headerName: "Fecha", field: "fecha", sortable: true, filter: true,
+            headerName: "Fecha", field: "fecha", sortable: true, filter: true, sort: 'desc',
             valueFormatter: params => {
                 if (!params.value) return '';
                 return params.value.split('T')[0];
@@ -85,9 +85,9 @@ export default function AdminFacturas() {
                 </Typography>
 
             </Box>
-        <Fab size="medium" color="secondary" aria-label="add" sx={{position: 'absolute',top: 100,right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' }}} onClick={handleDownload} >
-          <FileDownloadIcon />
-        </Fab>
+            <Fab size="medium" color="secondary" aria-label="add" sx={{ position: 'absolute', top: 100, right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }} onClick={handleDownload} >
+                <FileDownloadIcon />
+            </Fab>
             <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                 <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                     <AgGridReact

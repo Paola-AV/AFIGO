@@ -164,7 +164,7 @@ export default function GastosPage() {
             }
         },
         {
-            headerName: "Fecha", field: "fecha", sortable: true, filter: true, valueFormatter: params => {
+            headerName: "Fecha", field: "fecha", sortable: true, sort: 'desc', filter: true, valueFormatter: params => {
                 if (!params.value) return '';
                 return params.value.split('T')[0];
             }

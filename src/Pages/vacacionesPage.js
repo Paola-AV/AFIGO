@@ -11,7 +11,7 @@ export default function VacacionesPage() {
         <>
             <Nav></Nav>
             <Box sx={{ display: 'flex', width: '100%', height: '90vh' }}>
-                {isAdmin ? <AdminPeticionVacaciones></AdminPeticionVacaciones> : <UserPeticionVacaciones user={user}></UserPeticionVacaciones>}
+                {isAdmin ? <AdminPeticionVacaciones  user={user}></AdminPeticionVacaciones> : <UserPeticionVacaciones user={user}></UserPeticionVacaciones>}
 
             </Box>
         </>

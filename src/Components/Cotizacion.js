@@ -27,6 +27,7 @@ export function Cotizacion() {
                 const detalles = pedido.detalles || [];
                 if (detalles.length === 0) {
                     newData.push({
+                        nombreVendedor: pedido.nombreVendedor,
                         idPedido: pedido.idPedido,
                         fechaPedido: pedido.fechaPedido,
                         estado: pedido.estado,
@@ -46,11 +47,12 @@ export function Cotizacion() {
                     detalles.forEach((detalle, idx) => {
                         newData.push({
                             // Datos del pedido solo en primera fila
+                            nombreVendedor: idx === 0 ? pedido.nombreVendedor : '',
                             idPedido: idx === 0 ? pedido.idPedido : '',
                             fechaPedido: idx === 0 ? pedido.fechaPedido : '',
                             estado: idx === 0 ? pedido.estado : '',
                             nombreCliente: idx === 0 ? pedido.nombreCliente : '',
-                            facturaElectronica: idx === 0 ? pedido.facturaElectronica : '',
+                            facturaElectronica: idx === 0 ? pedido.facturaElectronica : 0,
                             detalleFactura: idx === 0 ? pedido.detalleFactura : '',
                             metodoEnvio: idx === 0 ? pedido.metodoEnvio : '',
                             direccionEnvio: idx === 0 ? pedido.direccionEnvio : '',
@@ -71,29 +73,42 @@ export function Cotizacion() {
         }
     }, [pedidos]);
 
-  const colDefs = [
-        { headerName: "Vendedor", field: "vendedor", filter: true },
-        { headerName: "Cliente", field: "nombreCliente",  filter: true },
-        { headerName: "Factura Electronica", field: "facturaElectronica", filter: true },
+    const colDefs = [
+        { headerName: "Vendedor", field: "nombreVendedor", filter: true },
+        { headerName: "Cliente", field: "nombreCliente", filter: true }, 
+        { headerName: "Factura Electronica", field: "facturaElectronica", filter: true, 
+            valueGetter: (params) =>{
+                if(params.data._isFirstRow){
+                    return(params.data.facturaElectronica===1 ? 'Sí' : 'No')
+                }else{
+                    return '';
+                }
+            } },
         { headerName: "Detalle Factura", field: "detalleFactura", filter: true },
-        { headerName: "Urgencia Envio", field: "urgenciaEnvio",  filter: true },
-        { headerName: "Producto", field: "nombreProducto",  filter: true },
-        { headerName: "Cantidad", field: "cantProducto",  filter: true },
-        { headerName: "Descripcion", field: "descripcion",  filter: true },
-        { headerName: "Estado", field: "estado",  filter: true },
+        { headerName: "Urgencia Envio", field: "urgenciaEnvio", filter: true },
+        { headerName: "Producto", field: "producto", filter: true },
+        { headerName: "Cantidad", field: "cantProducto", filter: true },
+        { headerName: "Descripcion", field: "descripcion", filter: true },
+        { headerName: "Estado", field: "estado", filter: true },
         { headerName: "Metodo Envio", field: "metodoEnvio", filter: true },
         { headerName: "Dirección", field: "direccionEnvio", filter: true },
-        { headerName: "Fecha Pedido", field: "fechaPedido", filter: true },
+        { headerName: "Fecha", field: "fechaPedido", filter: true },
     ];
 
     const defaultColDef = {
-        editable: true,
-        sortable:false,
+        editable: false,
+        sortable: false,
         flex: 1,
         minWidth: 100,
         filter: true,
         filterParams: {
             buttons: ['clear'],
+        }
+    };
+
+    const getRowStyle = (params) => {
+        if (params.data?._isFirstRow) {
+            return { borderTop: '1px solid #FF5A00' };
         }
     };
 
@@ -113,12 +128,14 @@ export function Cotizacion() {
                 </Box>
 
                 <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: '100%' }}>
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                         <AgGridReact
                             rowData={rowData}
                             columnDefs={colDefs}
                             defaultColDef={defaultColDef}
-                            theme={themeQuartz} />
+                            theme={themeQuartz}
+                            getRowStyle={getRowStyle}
+                            domLayout='normal'  />
                     </div>
                 </Box>
             </Box>

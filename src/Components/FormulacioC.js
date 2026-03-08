@@ -16,7 +16,7 @@ export function FormularioC() {
         NombreCliente: '',
         FechaPedido: '',
         Estado: 'Pendiente',
-        FacturaElectronica: 1,
+        FacturaElectronica: 0,
         DetalleFactura: '',
         MetodoEnvio: 'Express',
         DireccionEnvio: '',

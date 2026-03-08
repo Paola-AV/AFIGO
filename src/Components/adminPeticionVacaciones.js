@@ -2,24 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AgGridReact } from 'ag-grid-react';
 import { Box, Button, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { themeQuartz } from "ag-grid-community";
 import { Client } from "../Util/client";
-import CellEditor from "./cellEditor";
-import { ResetTvOutlined } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import Snackbar from '@mui/material/Snackbar';
 
-export default function AdminPeticionVacaciones() {
-    const navigate = useNavigate();
+export default function AdminPeticionVacaciones(props) {
     const [rowData, setRowData] = useState([]);
     const [peticionVacaciones, setPeticionVacaciones] = useState([]);
     const [trabajadores, setTrabajadores] = useState([]);
     const [users, setUsers] = useState(null);
+    const navigate = useNavigate();
+    const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
     useEffect(() => {
         Client.getPeticionesVacaciones().then(data => {
             setPeticionVacaciones(data);
-            console.log("Vacation requests fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo vacaciones:", error);
         });
@@ -28,7 +27,6 @@ export default function AdminPeticionVacaciones() {
     useEffect(() => {
         Client.getUsuarios().then(data => {
             setUsers(data);
-            console.log("Usuarios fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo usuarios:", error);
         });
@@ -38,11 +36,10 @@ export default function AdminPeticionVacaciones() {
         if (peticionVacaciones && peticionVacaciones.length > 0 && users && users.length > 0) {
             Client.getTrabajadores().then(data => {
                 data.forEach(trabajador => {
-                    const user = users ? users.find(u => u.id === trabajador.usuarioId) : null;
+                    const user = users ? users.find(u => u.userId === trabajador.idUsuario) : null;
                     trabajador.usuario = user;
                 });
                 setTrabajadores(data);
-                console.log("Trabajadores fetched successfully:", data);
             }).catch(error => {
                 console.error("Error obteniendo trabajadores:", error);
             });
@@ -52,14 +49,13 @@ export default function AdminPeticionVacaciones() {
     useEffect(() => {
         if (peticionVacaciones && peticionVacaciones.length > 0 && trabajadores && trabajadores.length > 0) {
             const rowData = peticionVacaciones.map(peticion => {
-                const trabajador = trabajadores.find(t => t.id === peticion.trabajadorId);
+                const trabajador = trabajadores.find(t => t.idTrabajador === peticion.idTrabajador);
                 return {
                     ...peticion,
                     trabajador: trabajador ? trabajador : "Desconocido"
                 };
             });
             setRowData(rowData);
-            console.log("Row data set successfully:", rowData);
         }
     }, [peticionVacaciones, trabajadores]);
 
@@ -83,6 +79,23 @@ export default function AdminPeticionVacaciones() {
 
         },
         {
+            headerName: "Creado en", field: "fechaCreado", sortable: true, filter: true, editable: false, sort: 'desc',
+            valueFormatter: params => {
+                if (!params.value) return '';
+                // Forzar UTC agregando Z si no la tiene
+                const raw = params.value.endsWith('Z') ? params.value : params.value + 'Z';
+                const date = new Date(raw);
+                return date.toLocaleString(navigator.language, {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                     hour12: true,
+                });
+            }
+        },
+        {
             headerName: "Eliminar",
             colId: "eliminar",
             sortable: false,
@@ -94,7 +107,6 @@ export default function AdminPeticionVacaciones() {
                     e?.stopPropagation?.(); // evita seleccionar la fila al hacer click
 
                     try {
-                        console.log("Attempting to delete vacation request with ID:", params);
                         Client.deletePeticionVacaciones(params.data.idPeticion).then(result => {
 
                             setPeticionVacaciones(prev => prev.filter(p => p.idPeticion !== params.data.idPeticion));
@@ -137,52 +149,82 @@ export default function AdminPeticionVacaciones() {
     ];
 
     const onCellValueChanged = (params) => {
-        const updatedPeticion = {
-            ...params.data,
-            estado: params.newValue.toUpperCase()
-        };
-        Client.updatePeticionVacaciones(updatedPeticion).then(result => {
+        if (params.data.trabajador.idUsuario == props.user.userId) {
+            console.warn("No puedes cambiar el estado de tu propia solicitud de vacaciones.");
+            setSnackbar({ open: true, message: 'No puede cambiar el estado de su propia solicitud.' });
+            setRowData(prev => prev.map(row =>
+                row === params.data
+                    ? { ...row, estado: params.oldValue }
+                    : row
+            ));
+            return;
+        } else {
+            const updatedPeticion = {
+                ...params.data,
+                estado: params.newValue.toUpperCase()
+            };
+            Client.updatePeticionVacaciones(updatedPeticion).then(result => {
 
-        }).catch(error => {
-            console.error("Error updating vacation request:", error);
-        });
+            }).catch(error => {
+                console.error("Error updating vacation request:", error);
+            });
+        }
+
     };
 
     return (
 
-        <Box sx={{ width: '100%', p: 3 }}>
+        <><Box sx={{ width: '100%', p: 3 }}>
+            <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => navigate('/PeticionVacaciones')}
+                sx={{ backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' }, mb: 3 }}
+            >
+                Agregar solicitud de vacaciones
+            </Button>
 
-            <Box sx={{ height: '40vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ height: 400, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                 <Typography variant="h5" component="h4" sx={{ mb: 2 }}>Peticiones de Vacaciones</Typography>
-                <div style={{ width: '100%' }}>
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={colDefs}
-                        defaultColDef={defaultColDef}
-                        theme={themeQuartz}
-                        onCellValueChanged={onCellValueChanged}
-                        domLayout='autoHeight'
-                        getRowId={(params) => String(params.data.idPeticion)}
-                    />
-                </div>
+                <Box sx={{ height: 300, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+                        <AgGridReact
+                            rowData={rowData}
+                            columnDefs={colDefs}
+                            defaultColDef={defaultColDef}
+                            theme={themeQuartz}
+                            onCellValueChanged={onCellValueChanged}
+                            domLayout='normal'
+                            getRowId={(params) => String(params.data.idPeticion)} />
+                    </div>
+                </Box>
+
             </Box>
 
-            <Box sx={{ height: '30vh', width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ height: 400, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                 <Typography variant="h5" component="h4" sx={{ mb: 2 }}>Dias Disponibles</Typography>
-                <div style={{ width: '100%' }}>
-                    <AgGridReact
-                        rowData={trabajadores}
-                        columnDefs={colDefsDias}
-                        defaultColDef={defaultColDef}
-                        theme={themeQuartz}
-                        onCellValueChanged={onCellValueChanged}
-                        domLayout='autoHeight'
-                        getRowId={(params) => String(params.data.idTrabajador)}
-                    />
-                </div>
+                <Box sx={{ height: 300, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+                        <AgGridReact
+                            rowData={trabajadores}
+                            columnDefs={colDefsDias}
+                            defaultColDef={defaultColDef}
+                            theme={themeQuartz}
+                            onCellValueChanged={onCellValueChanged}
+                            domLayout='normal'
+                            getRowId={(params) => String(params.data.idTrabajador)} />
+                    </div>
+                </Box>
+
             </Box>
         </Box>
-
-
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={() => setSnackbar({ open: false, message: '' })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                ContentProps={{ sx: { backgroundColor: '#ED6C02' } }} // color warning
+                message={snackbar.message} />
+        </>
     );
 }

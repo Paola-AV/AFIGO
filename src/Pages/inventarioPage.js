@@ -42,7 +42,7 @@ export default function InventarioPage() {
         { headerName: "Familia", field: "producto.familia", sortable: true, filter: true },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
         {
-            headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true, filter: true,
+            headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true,sort: 'desc',  filter: true,
             valueFormatter: params => {
                 if (!params.value) return '';
                 return params.value.split('T')[0];

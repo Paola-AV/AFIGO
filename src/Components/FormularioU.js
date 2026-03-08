@@ -14,7 +14,9 @@ export function FormularioU() {
         correo: '',
         isAdmin: '',
         nombreUsuario: '',
-        password: ''
+        password: '',
+        fechaInicio: '',
+        vacacionesDisponibles: 0
     });
 
     const handleChange = (e) => {
@@ -128,6 +130,25 @@ export function FormularioU() {
                             name="password"
                             type="password"
                             value={formData.password}
+                            onChange={handleChange}
+                            variant="outlined" />
+
+                         <TextField
+                            fullWidth
+                            label="Fecha de inicio"
+                            name="fechaInicio"
+                            type="date"
+                            value={formData.fechaInicio}
+                            onChange={handleChange}
+                            variant="outlined"
+                            InputLabelProps={{ shrink: true }} />
+
+                         <TextField
+                            fullWidth
+                            label="Vacaciones disponibles"
+                            name="vacacionesDisponibles"
+                            type="number"
+                            value={formData.vacacionesDisponibles}
                             onChange={handleChange}
                             variant="outlined" />
 

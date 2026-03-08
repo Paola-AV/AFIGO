@@ -375,4 +375,36 @@ export class Client {
     static async cambiarContrasena(userId, currentPassword, newPassword) {
         return this.post("Auth/change-password", { userId, currentPassword, newPassword });
     }
+
+    //urls para sync
+     static async syncAll() {
+        return this.post("ExternalSync/sync",{});
+    }
+
+     static async syncCuentas() {
+        return this.post("ExternalSync/syncCuentas",{});
+    }
+
+     static async syncVentas() {
+        return this.post("ExternalSync/syncVentas",{});
+    }
+     static async syncFacturas() {
+        return this.post("ExternalSync/syncFacturas",{});
+    }
+     
+    static async syncInventario() {
+        return this.post("ExternalSync/syncInventario",{});
+    }
+
+     static async syncGastos() {
+        return this.post("ExternalSync/syncGasto",{});
+    }
+
+     static async syncProveedor() {
+        return this.post("ExternalSync/syncProveedor",{});
+    }
+
+     static async syncProducto() {
+        return this.post("ExternalSync/syncProducto",{});
+    }
 }
