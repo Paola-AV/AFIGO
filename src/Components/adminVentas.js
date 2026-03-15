@@ -11,6 +11,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Fab from '@mui/material/Fab';
 
 export default function AdminVentas() {
     const [ventas, setVentas] = useState([]);
@@ -204,7 +206,10 @@ export default function AdminVentas() {
             buttons: ['clear'],
         }
     };
-
+    
+    const handleDownload = () => {
+        Client.descargarExcelVentas(desde, hasta)
+    }
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -244,7 +249,9 @@ export default function AdminVentas() {
                         />
                     </Box>
                 </Box>
-
+                <Fab size="medium" color="secondary" aria-label="add" sx={{ position: 'absolute', top: 100, right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }} onClick={handleDownload} >
+                    <FileDownloadIcon />
+                </Fab>
                 {/* Tabla */}
                 <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
                     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>

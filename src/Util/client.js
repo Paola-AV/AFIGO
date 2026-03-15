@@ -353,6 +353,10 @@ export class Client {
         return this.get(`Venta/comision?nombreVendedor=${nombreVendedor}`);
     }
 
+    static descargarExcelVentas(desde, hasta) {
+        return this.downloadExcel(`Venta/excel?desde=${desde}&hasta=${hasta}`, "ventas.xlsx");
+    }
+
     //urls para detalles de venta
     static getDetallesVenta() {
         return this.get(`VentaDetalle`);
