@@ -27,8 +27,6 @@ export function FormularioU() {
         }));
     };
 
-    useEffect(() => {console.log("Form data updated:", formData);}, [formData]);
-
     const handleSelectChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -52,7 +50,6 @@ export function FormularioU() {
 
         Client.register(formData).then(result => {
             e.preventDefault()
-            console.log('User creation result:', result);
             if (result ) {
                 navigate('/Usuarios');
             }

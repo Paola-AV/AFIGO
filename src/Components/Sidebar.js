@@ -22,17 +22,18 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../Context/AuthContext";
+import SyncIcon from '@mui/icons-material/Sync';
 
 export default function Sidebar() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = React.useState(false);
-  const { isAdmin, logout } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
-
+  
   const menuItems = [
     { label: 'Inicio', icon: <HomeIcon />, path: '/Inicio' },
     { label: 'Cotizaciones', icon: <RequestQuoteIcon />, path: '/Cotizacion' },
@@ -43,11 +44,11 @@ export default function Sidebar() {
 
     { label: 'Inventario', icon: <InventoryIcon />, path: '/Inventario' },
     { label: 'Pedidos', icon: <LocalShippingIcon />, path: '/Pedidos' },
-
+   ...(isAdmin? [{ label: 'Sincronización', icon: <SyncIcon />, path: '/Sync' }]: []),
     ...(isAdmin? [{ label: 'Usuarios', icon: <AccountCircleIcon />, path: '/Usuarios' }]: []),
 
     { label: 'Vacaciones', icon: <EventNoteIcon />, path: '/Vacaciones' },
-    { label: 'Ventas', icon: <PointOfSaleIcon />, path: '/Ventas' }
+    ...(isAdmin || user?.vendedor  ? [{ label: 'Ventas', icon: <PointOfSaleIcon />, path: '/Ventas' }] : []),
   ];
 
   const handleNavigation = (path) => {

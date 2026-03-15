@@ -16,7 +16,6 @@ export default function CuentasPage() {
     useEffect(() => {
         Client.getCuentas().then(data => {
             setCuentas(data);
-            console.log("Cuentas fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo cuentas:", error);
         });

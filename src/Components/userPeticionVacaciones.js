@@ -18,7 +18,6 @@ export default function UserPeticionVacaciones(props) {
         if(userId){
         Client.getTrabajadorByUsuarioId(props.user.userId).then(data => {
             setTrabajador(data);
-            console.log("Trabajadores fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo trabajadores:", error);
         });
@@ -29,7 +28,6 @@ export default function UserPeticionVacaciones(props) {
         if(trabajador){
         Client.getPeticionVacacionesByTrabajadorId(trabajador.idTrabajador).then(data => {
             setPeticionVacaciones(data);
-            console.log("Vacation requests fetched successfully:", data);
         }).catch(error => {
             console.error("Error obteniendo vacaciones:", error);
         });

@@ -7,6 +7,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Fab from '@mui/material/Fab';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 dayjs.locale('es');
 
 export default function AdminFacturas() {
@@ -49,8 +50,19 @@ export default function AdminFacturas() {
 
     const colDefs = [
         { headerName: "Numero", field: "numero", sortable: true, filter: true },
-        { headerName: "Estado", field: "estado", sortable: true, filter: true },
-        { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true },
+        {
+            headerName: "Estado", field: "estado", sortable: true, filter: true, valueFormatter: params => {
+                if (params.value === "1") {return "Activo"};
+                if (params.value === "2") return "Cancelado";
+                if (params.value === "3") return "Anulado";
+                return params.value;
+            }
+        },
+        { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            }, },
         {
             headerName: "Fecha", field: "fecha", sortable: true, filter: true, sort: 'desc',
             valueFormatter: params => {

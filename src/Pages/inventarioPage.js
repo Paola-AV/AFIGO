@@ -37,9 +37,17 @@ export default function InventarioPage() {
     }, [inventario]);
 
     const baseCols = [
-        { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true },
+        { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true, valueFormatter: params => {
+    if (!params.value) return '';
+    const val = params.value.toLowerCase();
+    return val.charAt(0).toUpperCase() + val.slice(1);
+  } },
         { headerName: "Producto", field: "producto.nombre", sortable: true, filter: true },
-        { headerName: "Familia", field: "producto.familia", sortable: true, filter: true },
+        { headerName: "Familia", field: "producto.familia", sortable: true, filter: true,valueFormatter: params => {
+    if (!params.value) return '';
+    const val = params.value.toLowerCase();
+    return val.charAt(0).toUpperCase() + val.slice(1);
+  } },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
         {
             headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true,sort: 'desc',  filter: true,

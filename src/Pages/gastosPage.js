@@ -150,8 +150,20 @@ export default function GastosPage() {
 
     const colDefs = [
 
-        { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true },
-        { headerName: "Tipo", field: "tipo", sortable: true, filter: true },
+        {
+            headerName: "Sucursal", field: "sucursal", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
+        {
+            headerName: "Tipo", field: "tipo", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
         {
             headerName: "Monto", field: "monto", sortable: true, filter: true, valueFormatter: (params) => {
                 const value = Number(params.value);
@@ -169,7 +181,13 @@ export default function GastosPage() {
                 return params.value.split('T')[0];
             }
         },
-        { headerName: "Descripcion", field: "descripcion", sortable: true, filter: true }
+        {
+            headerName: "Descripcion", field: "descripcion", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        }
 
     ];
 

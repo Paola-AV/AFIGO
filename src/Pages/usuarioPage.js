@@ -30,11 +30,9 @@ export default function UsuarioPage(props) {
 
   useEffect(() => {
     if (userId) {
-      console.log("Obteniendo trabajador para usuarioId:", userId);
       Client.getTrabajadorByUsuarioId(userId.userId)
         .then(data => {
           setTrabajador(data);
-          console.log("Trabajadores fetched successfully:", data);
         })
         .catch(error => {
           console.error("Error obteniendo trabajadores:", error);

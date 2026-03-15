@@ -81,8 +81,6 @@ export default function FormularioVacaciones() {
       fechaFin: formData.fechaFin.format("YYYY-MM-DD"),
     };
 
-    console.log("Formulario enviado:", payload);
-
     Client.createPeticionVacaciones(payload)
       .then((result) => {
         if (result) {

@@ -25,7 +25,6 @@ function handle403(status) {
 // 2) Helper para evaluar la respuesta en un solo lugar
 async function ensureOk(response) {
     if (response.ok) return response;
-    console.log(`HTTP error ${response.status} ${response.statusText}, "response":`, response);
     if (response.status === 401) {
         handle401(response.status);
     } else if (response.status === 403) {
@@ -156,7 +155,7 @@ export class Client {
     //urls para usuarios
 
     static getUsuarios() {
-        return this.get(`Usuarios`);
+        return this.get(`Usuarios/usuariotrabajador`);
     }
 
     static getUsuarioById(id) {
@@ -169,6 +168,10 @@ export class Client {
 
     static updateUsuario(usuario) {
         return this.put(`Usuarios`, usuario);
+    }
+
+     static inactivarUsuario(id) {
+        return this.put(`Usuarios/inactivo/${id}`, {});
     }
 
     static deleteUsuario(id) {
@@ -330,9 +333,26 @@ export class Client {
         return this.get(`Venta`);
     }
 
+    static getAllVentasConDetalles(desde, hasta) {
+        return this.get(`Venta/detalles?desde=${desde}&hasta=${hasta}`);
+    }
+
+    static getAllVentasConDetallesPorVendedor(desde, hasta, nombreVendedor) {
+        return this.get(`Venta/detalles/vendedor?desde=${desde}&hasta=${hasta}&nombreVendedor=${nombreVendedor}`);
+    } 
+
     static getVentaByIdTrabajador(id) {
         return this.get(`Venta/${id}`);
     }
+
+    static getAllComisiones() {
+        return this.get(`Venta/comision/todas`);
+    }
+
+    static getComisionPorVendedor(nombreVendedor) {
+        return this.get(`Venta/comision?nombreVendedor=${nombreVendedor}`);
+    }
+
     //urls para detalles de venta
     static getDetallesVenta() {
         return this.get(`VentaDetalle`);
@@ -377,34 +397,43 @@ export class Client {
     }
 
     //urls para sync
-     static async syncAll() {
-        return this.post("ExternalSync/sync",{});
+    static getSyncStatus() {
+        return this.get(`ExternalSync`);
     }
 
-     static async syncCuentas() {
-        return this.post("ExternalSync/syncCuentas",{});
+    static async syncAll() {
+        return this.post("ExternalSync/sync", {});
     }
 
-     static async syncVentas() {
-        return this.post("ExternalSync/syncVentas",{});
+    static async syncCuentas() {
+        return this.post("ExternalSync/syncCuentas", {});
     }
-     static async syncFacturas() {
-        return this.post("ExternalSync/syncFacturas",{});
+
+    static async syncVentas() {
+        return this.post("ExternalSync/syncVentas", {});
     }
-     
+    static async syncFacturas() {
+        return this.post("ExternalSync/syncFacturas", {});
+    }
+
     static async syncInventario() {
-        return this.post("ExternalSync/syncInventario",{});
+        return this.post("ExternalSync/syncInventario", {});
     }
 
-     static async syncGastos() {
-        return this.post("ExternalSync/syncGasto",{});
+    static async syncGastos() {
+        return this.post("ExternalSync/syncGasto", {});
     }
 
-     static async syncProveedor() {
-        return this.post("ExternalSync/syncProveedor",{});
+    static async syncProveedor() {
+        return this.post("ExternalSync/syncProveedor", {});
     }
 
-     static async syncProducto() {
-        return this.post("ExternalSync/syncProducto",{});
+    static async syncProducto() {
+        return this.post("ExternalSync/syncProducto", {});
+    }
+
+    //urls para vendedores
+    static getNombreVendedores() {
+        return this.get(`Vendedor`);
     }
 }

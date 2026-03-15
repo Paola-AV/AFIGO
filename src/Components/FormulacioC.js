@@ -32,7 +32,6 @@ export function FormularioC() {
                 IdUsuario: user.userId
             }));
         }
-        console.log("User data in FormularioV:", user);
     }, [user]);
 
     const [detalles, setDetalles] = useState([]);
@@ -154,7 +153,6 @@ export function FormularioC() {
             };
 
             const responsePedido = await Client.createPedido(pedidoData);
-            console.log('Pedido creado:', responsePedido);
             const idPedidoCreado = responsePedido.idPedido;
 
             // 2. Crear los detalles uno a uno
@@ -163,9 +161,7 @@ export function FormularioC() {
                     ...detalle,
                     PedidoId: idPedidoCreado
                 };
-                console.log('Creando detalle:', detalleData);
                 const responseDetalle = await Client.createDetallePedido(detalleData);
-                console.log('Detalle creado:', responseDetalle);
             }
 
             alert('Cotizacion creada exitosamente');
@@ -348,7 +344,7 @@ export function FormularioC() {
                                             }
                                         }}
                                     >
-                                        + Agregar Detalle
+                                        + Agregar Producto
                                     </Button>
                                 </Box>
                             </Box>

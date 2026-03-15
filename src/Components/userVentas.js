@@ -1,128 +1,160 @@
 import React, { useEffect, useState } from "react";
 import { AgGridReact } from 'ag-grid-react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 import { themeQuartz } from "ag-grid-community";
 import { Client } from "../Util/client";
-import { useAuth } from "../Context/AuthContext"
+import VentasGraficos from "./ventasGraficos";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { useAuth } from "../Context/AuthContext";
 
-export default function UserVentas() {
-    const { user } = useAuth();
+export default function AdminVentas() {
     const [ventas, setVentas] = useState([]);
-    const [clientes, setClientes] = useState([]);
-    const [trabajador, setTrabajador] = useState(null);
-    const [productos, setProductos] = useState([]);
-    const [usuarios, setUsuarios] = useState([]);
+    const [comision, setComision] = useState([]);
+    const hoy = dayjs();
+    const haceUnMes = dayjs().subtract(1, 'month');
+    const [desde, setDesde] = useState(haceUnMes);
+    const [hasta, setHasta] = useState(hoy);
     const [rowData, setRowData] = useState([]);
-    const [usuarioTrabajador, setUsuarioTrabajador] = useState(null);
+    const { user} = useAuth();
 
 
     useEffect(() => {
-        if (user) {
-            setUsuarioTrabajador(user);
-        }
+        if (!desde || !hasta || !user) return;
+
+        Client.getAllVentasConDetallesPorVendedor(desde.format('YYYY-MM-DD'), hasta.format('YYYY-MM-DD'), user.nombreVendedor 
+        ).then(data => {
+            setVentas(data);
+        }).catch(error => {
+            console.error("Error obteniendo ventas:", error);
+        });
+    }, [desde, hasta, user]);
+
+    useEffect(() => {
+        if (!user) return;
+        Client.getComisionPorVendedor(user.nombreVendedor 
+        ).then(data => {
+            setComision(data);
+        }).catch(error => {
+            console.error("Error obteniendo comision:", error);
+        });
     }, [user]);
 
     useEffect(() => {
-        if (usuarioTrabajador) {
-            Client.getTrabajadorByUsuarioId(usuarioTrabajador.userId).then(data => {
-                setTrabajador(data);
-                console.log("Trabajadores:", data);
-            }).catch(error => {
-                console.error("Error obteniendo trabajadores:", error);
+        if (ventas.length > 0) {
+            const newData = [];
+            ventas.forEach(venta => {
+                const detalles = venta.ventaDetalles || [];
+                if (detalles.length === 0) {
+                    newData.push({
+                        descripcion: venta.descripcion,
+                        estado: venta.estado,
+                        fecha: venta.fechaPedido,
+                        montoTotal: venta.montoTotal,
+                        nombreCliente: venta.nombreCliente,
+                        nombreVendor: venta.nombreVendor,
+                        numFactura: venta.numFactura,
+                        referencia: venta.referencia,
+                        cantidad: '',
+                        familiaProducto: '',
+                        nombreProducto: '',
+                        _isFirstRow: true,
+                    });
+                } else {
+                    detalles.forEach((detalle, idx) => {
+                        newData.push({
+                            descripcion: idx === 0 ? venta.descripcion : '',
+                            estado: idx === 0 ? venta.estado : '',
+                            fecha: idx === 0 ? venta.fecha : '',
+                            montoTotal: idx === 0 ? venta.montoTotal : '',
+                            nombreCliente: idx === 0 ? venta.nombreCliente : '',
+                            nombreVendor: idx === 0 ? venta.nombreVendor : '',
+                            numFactura: idx === 0 ? venta.numFactura : '',
+                            referencia: idx === 0 ? venta.referencia : '',
+                            // Detalle siempre visible
+                            cantidad: detalle.cantidad,
+                            familiaProducto: detalle.familiaProducto,
+                            nombreProducto: detalle.nombreProducto,
+                            _isFirstRow: idx === 0,
+                        });
+                    });
+                }
+
             });
+            setRowData(newData);
         }
-    }, [usuarioTrabajador]);
-
-    useEffect(() => {
-        Client.getProductos().then(data => {
-            setProductos(data);
-            console.log("Productos:", data);
-        }).catch(error => {
-            console.error("Error obteniendo productos:", error);
-        });
-    }, []);
-
-    useEffect(() => {
-        if (trabajador && trabajador.idTrabajador) {
-            console.log("Trabajador ID:", trabajador.idTrabajador);
-            Client.getVentaByIdTrabajador(trabajador.idTrabajador).then(data => {
-                setVentas(data);
-                console.log("Ventas:", data);
-            }).catch(error => {
-                console.error("Error obteniendo ventas:", error);
-            });
-        }
-    }, [trabajador]);
-
-    useEffect(() => {
-        Client.getClientes().then(data => {
-            setClientes(data);
-            console.log("Clientes:", data);
-        }).catch(error => {
-            console.error("Error obteniendo clientes:", error);
-        });
-    }, []);
-
-
-
-    useEffect(() => {
-        if (!(trabajador?.idTrabajador && clientes.length && productos.length && ventas.length)) {
-            setRowData([]);
-            return;
-        }
-
-        const vendedor =
-            `${trabajador?.primerNombre ?? ""} ${trabajador?.primerApellido ?? ""}`.trim() || "Vendedor";
-
-        const filas = [];
-
-        for (const venta of ventas) {
-            const cliente = clientes.find((c) => c.idCliente === venta.idCliente);
-            const nombreCliente = cliente
-                ? `${cliente.primerNombre ?? ""} ${cliente.primerApellido ?? ""}`.trim()
-                : "Cliente no encontrado";
-
-            // Normaliza detalles: soporta venta.detalles (array) o venta.detalle (objeto)
-            const detalles = Array.isArray(venta.ventaDetalles)
-                ? venta.ventaDetalles
-                : venta.ventaDetalles
-                    ? [venta.ventaDetalles]
-                    : [];
-
-            for (const det of detalles) {
-                const producto = productos.find((p) => p.idProducto === det.idProducto);
-
-                filas.push({
-                    // campos simples
-                    cantidad: det.cantidad ?? 0,
-                    usuario: user?.nombre ?? vendedor, // toma del contexto si existe
-                    cliente: nombreCliente,
-
-                    // campos anidados para valueGetter
-                    producto: producto || null,
-                    venta: venta || null,
-
-                    // opcional: id estable por fila (venta + producto)
-                    id: `${venta.idVenta ?? venta.numFactura ?? Math.random()}-${det.idProducto}`,
-                });
-            }
-        }
-
-        setRowData(filas);
-        console.log("RowData (por detalle):", filas);
-    }, [ventas, clientes, productos, trabajador, user]);
+    }, [ventas]);
 
 
     const colDefs = [
-        { headerName: "Producto", field: "producto.nombre", sortable: true, filter: true },
-        { headerName: "Familia", field: "producto.familia", sortable: true, filter: true },
+        {
+            headerName: "Ventas", field: "descripcion", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
+        {
+            headerName: "Estado", field: "estado", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
+        {
+            headerName: "Fecha", field: "fecha", sortable: true, filter: true,
+            valueFormatter: params => {
+                if (!params.value) return '';
+                return params.value.split('T')[0];
+            }
+        },
+        {
+            headerName: "Monto Total", field: "montoTotal", sortable: true, filter: true,
+            valueGetter: (params) => {
+                if (params.data._isFirstRow) {
+                    return (params.data.montoTotal);
+                } else {
+                    return '';
+                }
+            }, valueFormatter: (params) => {
+                const value = Number(params.value);
+                if (isNaN(value)) return " ";
+                if (params.data._isFirstRow) {
+                    return "₡" + value.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }else {
+                    return " ";
+                }
+            }
+        },
+        { headerName: "Cliente", field: "nombreCliente", sortable: true, filter: true },
+        {
+            headerName: "Vendedor", field: "nombreVendor", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
+        {
+            headerName: "Referencia", field: "referencia", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
-        { headerName: "Numero", field: "venta.numFactura", sortable: true, filter: true },
-        { headerName: "Estado", field: "venta.estado", sortable: true, filter: true },
-        { headerName: "Sucursal", field: "venta.sucursal", sortable: true, filter: true },
-        { headerName: "Fecha", field: "venta.fecha", sortable: true, filter: true },
-        { headerName: "Vendedor", field: "usuario", sortable: true, filter: true },
-        { headerName: "Cliente", field: "cliente", sortable: true, filter: true, },
+        {
+            headerName: "Familia de Producto", field: "familiaProducto", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            },
+        },
+        { headerName: "Nombre del Producto", field: "nombreProducto", sortable: true, filter: true, }
 
     ];
 
@@ -136,31 +168,75 @@ export default function UserVentas() {
         }
     };
 
+    const getRowStyle = (params) => {
+        if (params.data?._isFirstRow) {
+            return { borderTop: '1px solid #FF5A00' };
+        }
+    };
+
     return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{ width: '100%', p: 3 }}>
 
-        <Box sx={{ width: '100%', p: 3 }}>
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h5" component="h1">
-                    Ventas
-                </Typography>
+                {/* Header con título y date pickers */}
+                <Box sx={{
+                    mb: 3,
+                    display: 'flex',
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2,
+                }}>
+                    <Typography variant="h5" component="h1" sx={{ flexShrink: 0 }}>
+                        Ventas
+                    </Typography>
 
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                        <DatePicker
+                            label="Desde"
+                            value={desde}
+                            onChange={(val) => setDesde(val)}
+                            maxDate={hasta}
+                            slotProps={{
+                                textField: { size: 'small' }
+                            }}
+                        />
+                        <DatePicker
+                            label="Hasta"
+                            value={hasta}
+                            onChange={(val) => setHasta(val)}
+                            minDate={desde}
+                            maxDate={hoy}
+                            slotProps={{
+                                textField: { size: 'small' }
+                            }}
+                        />
+                    </Box>
+                    <Box sx={{ ml: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                        <Typography variant="subtitle2" color="text.secondary">
+                            Comisión del período: {comision?.mes}
+                        </Typography>
+                        <Typography variant="h6" fontWeight={600} color="#4caf50">
+                            ₡{(comision?.comision ?? 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </Typography>
+                    </Box>
+                </Box>
+
+                {/* Tabla */}
+                <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+                        <AgGridReact
+                            rowData={rowData}
+                            columnDefs={colDefs}
+                            defaultColDef={defaultColDef}
+                            theme={themeQuartz}
+                            domLayout='normal'
+                            getRowStyle={getRowStyle}
+                        />
+                    </div>
+                </Box>
+
+                <VentasGraficos ventas={ventas} />
             </Box>
-
-            <Box sx={{ height: 500, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
-                <div style={{ width: '100%' }}>
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={colDefs}
-                        defaultColDef={defaultColDef}
-                        theme={themeQuartz}
-                        domLayout='autoHeight'
-                    />
-                </div>
-            </Box>
-
-
-        </Box>
-
-
+        </LocalizationProvider>
     );
 }
