@@ -402,7 +402,7 @@ export function FormularioC() {
                                     mt: 2
                                 }}
                             >
-                                Enviar Pedido
+                                Enviar Cotización
                             </Button>
                         </Box>
                     </Paper>
