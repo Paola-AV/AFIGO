@@ -23,6 +23,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../Context/AuthContext";
 import SyncIcon from '@mui/icons-material/Sync';
+import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 
 export default function Sidebar() {
   const [open, setOpen] = React.useState(false);
@@ -36,6 +37,7 @@ export default function Sidebar() {
   
   const menuItems = [
     { label: 'Inicio', icon: <HomeIcon />, path: '/Inicio' },
+    { label: 'Catálogo', icon: <ProductionQuantityLimitsIcon />, path: '/Catalogo' },
     { label: 'Cotizaciones', icon: <RequestQuoteIcon />, path: '/Cotizacion' },
 
     ...(isAdmin? [{ label: 'Cuentas Por Pagar', icon: <PaymentIcon />, path: '/Cuentas' }]: []),

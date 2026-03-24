@@ -1,13 +1,8 @@
+const API_BASE_URL = "https://api.vizodatasolution.com/api/";
 
-const API_BASE_URL = "https://localhost:7122/api/";
-
-
-// 1) Helper para redirigir en 401 o 403
 function handle401(status) {
     if (status === 401) {
-        // Evita bucle si ya estás en /login
         if (window.location.pathname !== "/") {
-            // Guardar returnUrl para volver luego de autenticarse
             const returnUrl = encodeURIComponent(window.location.href);
             window.location.href = `/?returnUrl=${returnUrl}`;
         }
@@ -16,8 +11,6 @@ function handle401(status) {
 
 function handle403(status) {
     if (status === 403) {
-        // Puedes mostrar mensaje o redirigir a "Acceso denegado"
-        // window.location.href = "/acceso-denegado";
         alert("No tienes permisos para esta acción.");
     }
 }
@@ -31,7 +24,6 @@ async function ensureOk(response) {
         handle403(response.status);
     }
 
-    // Armar detalle de error
     let detail = "";
     try {
         const contentType = response.headers.get("Content-Type") || "";
@@ -114,14 +106,12 @@ export class Client {
     static async downloadExcel(uri, suggestedName = "export.xlsx") {
         const response = await fetch(API_BASE_URL + uri, {
             method: "GET",
-            // Para Excel el Accept no tiene que ser JSON
             headers: { "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
-            credentials: "include" // mantiene cookies/sesión si tu API las usa
+            credentials: "include"
         });
 
-        await ensureOk(response); // reutiliza tu manejo 401/403/errores
+        await ensureOk(response); 
 
-        // Intenta obtener el nombre de archivo del header Content-Disposition
         const dispo = response.headers.get("Content-Disposition") || "";
         let fileName = suggestedName;
         const match = dispo.match(/filename\*?=([^;]+)$/i);
@@ -148,7 +138,6 @@ export class Client {
         // Limpia el ObjectURL
         window.URL.revokeObjectURL(url);
 
-        // Devuelve info por si quieres notificar/telemetría
         return { ok: true, fileName: a.download, size: blob.size, contentType: blob.type };
     }
 
@@ -288,6 +277,14 @@ export class Client {
 
     static getPeticionesVacaciones() {
         return this.get(`PeticionVacaciones`);
+    }
+
+    static getPeticionesVacacionesFuturas() {
+        return this.get(`PeticionVacaciones/futuro`);
+    }
+
+    static getPeticionesVacacionesPasadas() {
+        return this.get(`PeticionVacaciones/pasado`);
     }
 
     static getPeticionVacacionesById(id) {

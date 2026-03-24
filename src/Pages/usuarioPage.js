@@ -209,10 +209,11 @@ export default function UsuarioPage(props) {
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2 }}>
-          <Button onClick={handleCloseModal} disabled={loading}>Cancelar</Button>
+          <Button onClick={handleCloseModal} disabled={loading}  sx={{ color: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }}>Cancelar</Button>
           <Button
             onClick={handleSubmit}
             variant="contained"
+             sx={{ backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }}
             color="primary"
             disabled={loading}
             startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}

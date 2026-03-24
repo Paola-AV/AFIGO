@@ -17,6 +17,7 @@ import InventarioPage from "./Pages/inventarioPage";
 import CuentasPage from "./Pages/cuentasPage";
 import UsuarioPage from "./Pages/usuarioPage";
 import SyncPage from "./Pages/SyncPage";
+import CatalogoPage from "./Pages/CatalogoPage";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/Cuentas" element={<CuentasPage/>}></Route>
         <Route path="/Usuario" element={<UsuarioPage/>}></Route>
         <Route path="/Sync" element={<SyncPage/>}></Route>
+        <Route path="/Catalogo" element={<CatalogoPage/>}></Route>
       </Routes>    
 
   );
