@@ -13,7 +13,6 @@ export default function CatalogoPage() {
     useEffect(() => {
         Client.getProductos().then(data => {
             setProductos(data);
-            console.log(data)
         }).catch(error => {
             console.error("Error obteniendo inventario:", error);
         });

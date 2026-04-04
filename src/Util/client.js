@@ -1,5 +1,8 @@
 const API_BASE_URL = "https://api.vizodatasolution.com/api/";
 
+//dev
+//const API_BASE_URL = "https://localhost:7122/api/";
+
 function handle401(status) {
     if (status === 401) {
         if (window.location.pathname !== "/") {
@@ -395,6 +398,10 @@ export class Client {
 
     static async cambiarContrasena(userId, currentPassword, newPassword) {
         return this.post("Auth/change-password", { userId, currentPassword, newPassword });
+    }
+
+    static async cambiarContrasenaForzado(userId, newPassword) {
+        return this.post("Auth/change-password", { userId, newPassword });
     }
 
     //urls para sync

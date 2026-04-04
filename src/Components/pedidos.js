@@ -7,20 +7,30 @@ import { themeQuartz } from "ag-grid-community";
 import { Nav } from "./Nav";
 import { Client } from "../Util/client";
 import { use } from "react";
-
+import { useAuth } from "../Context/AuthContext";
 
 export default function Pedidos() {
     const navigate = useNavigate();
     const [rowData, setRowData] = useState([]);
     const [pedidos, setPedidos] = useState([]);
+   const { user} = useAuth();
 
     useEffect(() => {
-        Client.getPedidoTipo().then(data => {
-            setPedidos(data);
+        if(user){
+            Client.getPedidoTipo().then(data => {
+            let filtered = data;
+            const sede = user.sede?.trim().toUpperCase();
+            if (sede && sede !== "TODAS") {
+                filtered = data.filter(p =>
+                    p.sucursal?.toUpperCase().includes(sede)
+                );
+            }
+            setPedidos(filtered);
         }).catch(error => {
             console.error("Error obteniendo pedidos:", error);
         });
-    }, []);
+        }
+    }, [user]);
 
     useEffect(() => {
         if (pedidos.length > 0) {
@@ -40,6 +50,7 @@ export default function Pedidos() {
                         direccionEnvio: pedido.direccionEnvio,
                         urgenciaEnvio: pedido.urgenciaEnvio,
                         vendedor: pedido.vendedor,
+                        sucursal: pedido.sucursal,
                         producto: '',
                         cantProducto: '',
                         descripcion: '',
@@ -60,6 +71,7 @@ export default function Pedidos() {
                             direccionEnvio: idx === 0 ? pedido.direccionEnvio : '',
                             urgenciaEnvio: idx === 0 ? pedido.urgenciaEnvio : '',
                             vendedor: idx === 0 ? pedido.vendedor : '',
+                            sucursal: idx === 0 ? pedido.sucursal : '',
                             // Detalle siempre visible
                             producto: detalle.nombreProducto,
                             cantProducto: detalle.cantProducto,
@@ -76,6 +88,11 @@ export default function Pedidos() {
     }, [pedidos]);
 
     const colDefs = [
+        { headerName: "Sucursal", field: "sucursal", filter: true, valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            } },
         { headerName: "Vendedor", field: "nombreVendedor", filter: true },
         { headerName: "Cliente", field: "nombreCliente", filter: true },
         {
@@ -88,19 +105,29 @@ export default function Pedidos() {
                 }
             }
         },
-        { headerName: "Detalle Factura", field: "detalleFactura", filter: true },
-        { headerName: "Urgencia Envio", field: "urgenciaEnvio", filter: true },
-        { headerName: "Producto", field: "producto", filter: true },
-        { headerName: "Cantidad", field: "cantProducto", filter: true },
-        { headerName: "Descripcion", field: "descripcion", filter: true },
-        { headerName: "Estado", field: "estado", filter: true },
-        { headerName: "Metodo Envio", field: "metodoEnvio", filter: true },
-        { headerName: "Dirección", field: "direccionEnvio", filter: true },
-        { headerName: "Fecha Pedido", field: "fechaPedido", filter: true },
+        { headerName: "Detalle Factura", field: "detalleFactura", filter: true, editable: false },
+        { headerName: "Urgencia Envio", field: "urgenciaEnvio", filter: true, editable: false },
+        { headerName: "Producto", field: "producto", filter: true, editable: false },
+        { headerName: "Cantidad", field: "cantProducto", filter: true, editable: false },
+        { headerName: "Descripcion", field: "descripcion", filter: true, editable: false },
+        {
+            headerName: "Estado", field: "estado", filter: true, editable: (params) => params.data?._isFirstRow === true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: ["Pendiente", "Confirmado", "Enviado", "Entregado", "Cancelado"]
+            },
+            valueFormatter: params => {
+                if (!params.value) return "";
+                const v = params.value.toString();
+                return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+            }
+        },
+        { headerName: "Metodo Envio", field: "metodoEnvio", filter: true, editable: false },
+        { headerName: "Dirección", field: "direccionEnvio", filter: true, editable: false },
+        { headerName: "Fecha Pedido", field: "fechaPedido", filter: true, editable: false },
     ];
 
     const defaultColDef = {
-        editable: true,
         sortable: false,
         flex: 1,
         minWidth: 100,
@@ -109,6 +136,17 @@ export default function Pedidos() {
             buttons: ['clear'],
         }
     };
+
+
+    const onCellValueChanged = (params) => {
+        if (params.colDef.field === 'estado' && params.data._isFirstRow && params.data.estado) {
+            var pedido = {
+                idPedido: params.data.idPedido,
+                estado: params.data.estado.toUpperCase(),
+            };
+            Client.updatePedido(pedido);
+        }
+    }
 
     const getRowStyle = (params) => {
         if (params.data?._isFirstRow) {
@@ -139,7 +177,9 @@ export default function Pedidos() {
                             defaultColDef={defaultColDef}
                             theme={themeQuartz}
                             getRowStyle={getRowStyle}
-                            domLayout='normal' />
+                            domLayout='normal'
+                            stopEditingWhenCellsLoseFocus={true}
+                            onCellValueChanged={onCellValueChanged} />
                     </div>
                 </Box>
             </Box>

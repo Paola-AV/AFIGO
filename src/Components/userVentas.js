@@ -10,7 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useAuth } from "../Context/AuthContext";
 
-export default function AdminVentas() {
+export default function UserVentas() {
     const [ventas, setVentas] = useState([]);
     const [comision, setComision] = useState([]);
     const hoy = dayjs();

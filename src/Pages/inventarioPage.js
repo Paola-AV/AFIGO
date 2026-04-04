@@ -14,12 +14,21 @@ export default function InventarioPage() {
     const { user, isAdmin, } = useAuth();
 
     useEffect(() => {
-        Client.getInventario().then(data => {
-            setInventario(data);
-        }).catch(error => {
-            console.error("Error obteniendo inventario:", error);
-        });
-    }, []);
+        if (user) {
+            Client.getInventario().then(data => {
+                let filtered = data;
+                const sede = user.sede?.trim().toUpperCase();
+                if (sede && sede !== "TODAS") {
+                    filtered = data.filter(p =>
+                        p.sucursal?.toUpperCase().includes(sede)
+                    );
+                }
+                setInventario(filtered);
+            }).catch(error => {
+                console.error("Error obteniendo inventario:", error);
+            });
+        }
+    }, [user]);
 
     useEffect(() => {
         if (inventario.length > 0) {
@@ -37,20 +46,24 @@ export default function InventarioPage() {
     }, [inventario]);
 
     const baseCols = [
-        { headerName: "Sucursal", field: "sucursal", sortable: true, filter: true, valueFormatter: params => {
-    if (!params.value) return '';
-    const val = params.value.toLowerCase();
-    return val.charAt(0).toUpperCase() + val.slice(1);
-  } },
+        {
+            headerName: "Sucursal", field: "sucursal", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return '';
+                const val = params.value.toLowerCase();
+                return val.charAt(0).toUpperCase() + val.slice(1);
+            }
+        },
         { headerName: "Producto", field: "producto.nombre", sortable: true, filter: true },
-        { headerName: "Familia", field: "producto.familia", sortable: true, filter: true,valueFormatter: params => {
-    if (!params.value) return '';
-    const val = params.value.toLowerCase();
-    return val.charAt(0).toUpperCase() + val.slice(1);
-  } },
+        {
+            headerName: "Familia", field: "producto.familia", sortable: true, filter: true, valueFormatter: params => {
+                if (!params.value) return '';
+                const val = params.value.toLowerCase();
+                return val.charAt(0).toUpperCase() + val.slice(1);
+            }
+        },
         { headerName: "Cantidad", field: "cantidad", sortable: true, filter: true },
         {
-            headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true,sort: 'desc',  filter: true,
+            headerName: "Fecha Ingreso", field: "fechaIngreso", sortable: true, sort: 'desc', filter: true,
             valueFormatter: params => {
                 if (!params.value) return '';
                 return params.value.split('T')[0];

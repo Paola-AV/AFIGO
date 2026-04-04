@@ -17,11 +17,20 @@ export default function EditarUsuario({ usuario, open, onGuardado, onCancelar })
         usuarioAdmin: false,
         vendedor: false,
         nombreVendedor: null,
+        sede: ''
     });
 
     const [nombresVendedor, setNombresVendedor] = useState([]);
     const [loading, setLoading] = useState(false);
     const [guardando, setGuardando] = useState(false);
+    const sedes = [
+        "NICOYA",
+        "PALMARES",
+        "COBANO",
+        "SARCHI",
+        "TODAS"
+    ];
+
     // Resetea el form cuando cambia el usuario
     useEffect(() => {
         if (usuario) {
@@ -34,6 +43,7 @@ export default function EditarUsuario({ usuario, open, onGuardado, onCancelar })
                 usuarioAdmin: usuario?.usuarioAdmin || false,
                 vendedor: usuario?.trabajador?.vendedor || false,
                 nombreVendedor: usuario?.trabajador?.nombreVendedor || null,
+                sede: usuario?.trabajador?.sede || "",
             });
         }
     }, [usuario]);
@@ -63,6 +73,8 @@ export default function EditarUsuario({ usuario, open, onGuardado, onCancelar })
     const handleGuardar = async () => {
         setGuardando(true);
         try {
+            if(form.usuarioAdmin==1){form.usuarioAdmin=true}else if (form.usuarioAdmin==0){form.usuarioAdmin=false}
+            if(form.vendedor==1){form.vendedor=true}else if (form.vendedor==0){form.vendedor=false}
             await Client.updateUsuario(form);
             onGuardado?.();
         } catch (err) {
@@ -170,6 +182,27 @@ export default function EditarUsuario({ usuario, open, onGuardado, onCancelar })
                             )}
                         />
                     )}
+
+
+                    <Autocomplete
+                        options={sedes}
+                        value={form.sede}
+                        onChange={(_, newValue) =>
+                            setForm(prev => ({ ...prev, sede: newValue }))
+                        }
+                        getOptionLabel={(option) =>
+                            option ? option.charAt(0) + option.slice(1).toLowerCase() : ""
+                        }
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Sede"
+                                size="small"
+                                fullWidth
+                            />
+                        )}
+                    />
+
                 </Box>
             </DialogContent>
 

@@ -13,6 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Fab from '@mui/material/Fab';
+import { useAuth } from "../Context/AuthContext";
 
 export default function AdminVentas() {
     const [ventas, setVentas] = useState([]);
@@ -23,17 +24,41 @@ export default function AdminVentas() {
     const [rowData, setRowData] = useState([]);
     const [comisiones, setComisiones] = useState([]);
     const [tablaComision, setTablaComision] = useState([]);
+    const { user } = useAuth();
+    const [sedeFiltro, setSedeFiltro] = useState("TODAS");
 
     useEffect(() => {
-        if (!desde || !hasta) return;
+        if (!desde || !hasta || !user) return;
 
-        Client.getAllVentasConDetalles(desde.format('YYYY-MM-DD'), hasta.format('YYYY-MM-DD')
-        ).then(data => {
-            setVentas(data);
-        }).catch(error => {
-            console.error("Error obteniendo ventas:", error);
-        });
-    }, [desde, hasta]);
+        Client.getAllVentasConDetalles(
+            desde.format("YYYY-MM-DD"),
+            hasta.format("YYYY-MM-DD")
+        )
+            .then((data) => {
+                let filtered = data;
+
+                const sedeUser = user.sede?.toUpperCase().trim();
+                const filtro = sedeFiltro?.toUpperCase().trim();
+
+                // Si el usuario NO ES "TODAS", filtra automáticamente
+                if (sedeUser !== "TODAS") {
+                    filtered = data.filter((v) =>
+                        v.descripcion?.toUpperCase().includes(sedeUser)
+                    );
+                }
+                // Si el usuario ES "TODAS", pero seleccionó una sucursal en el filtro
+                else if (filtro !== "TODAS") {
+                    filtered = data.filter((v) =>
+                        v.descripcion?.toUpperCase().includes(filtro)
+                    );
+                }
+
+                setVentas(filtered);
+            })
+            .catch((error) => {
+                console.error("Error obteniendo ventas:", error);
+            });
+    }, [desde, hasta, user, sedeFiltro]);
 
     useEffect(() => {
 
@@ -95,7 +120,7 @@ export default function AdminVentas() {
 
     const colDefs = [
         {
-            headerName: "Ventas", field: "descripcion", sortable: true, filter: true, valueFormatter: params => {
+            headerName: "Sucursal", field: "descripcion", sortable: true, filter: true, valueFormatter: params => {
                 if (!params.value) return "";
                 const v = params.value.toString();
                 return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
@@ -206,7 +231,7 @@ export default function AdminVentas() {
             buttons: ['clear'],
         }
     };
-    
+
     const handleDownload = () => {
         Client.descargarExcelVentas(desde, hasta)
     }
@@ -248,6 +273,22 @@ export default function AdminVentas() {
                             }}
                         />
                     </Box>
+
+                    {user.sede === "TODAS" && (
+                        <Box sx={{ minWidth: 200 }}>
+                            <select
+                                value={sedeFiltro}
+                                onChange={(e) => setSedeFiltro(e.target.value)}
+                                style={{ padding: "8px", borderRadius: "5px" }}
+                            >
+                                <option value="TODAS">Todas las sucursales</option>
+                                <option value="PALMARES">Palmares</option>
+                                <option value="COBANO">Cóbano</option>
+                                <option value="SARCHI">Sarchí</option>
+                                <option value="NICOYA">Nicoya</option>
+                            </select>
+                        </Box>
+                    )}
                 </Box>
                 <Fab size="medium" color="secondary" aria-label="add" sx={{ position: 'absolute', top: 100, right: 30, backgroundColor: '#FF5A00', '&:hover': { backgroundColor: '#CF4C05' } }} onClick={handleDownload} >
                     <FileDownloadIcon />

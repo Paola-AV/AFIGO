@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AgGridReact } from 'ag-grid-react';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { themeQuartz } from "ag-grid-community";
+import { _paramValueToCss, themeQuartz } from "ag-grid-community";
 import { Client } from "../Util/client";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { use } from "react";
@@ -15,26 +15,26 @@ export default function UserPeticionVacaciones(props) {
     const userId = props.user?.userId;
 
     useEffect(() => {
-        if(userId){
-        Client.getTrabajadorByUsuarioId(props.user.userId).then(data => {
-            setTrabajador(data);
-        }).catch(error => {
-            console.error("Error obteniendo trabajadores:", error);
-        });
-    }
+        if (userId) {
+            Client.getTrabajadorByUsuarioId(props.user.userId).then(data => {
+                setTrabajador(data);
+            }).catch(error => {
+                console.error("Error obteniendo trabajadores:", error);
+            });
+        }
     }, [userId]);
 
     useEffect(() => {
-        if(trabajador){
-        Client.getPeticionVacacionesByTrabajadorId(trabajador.idTrabajador).then(data => {
-            setPeticionVacaciones(data);
-        }).catch(error => {
-            console.error("Error obteniendo vacaciones:", error);
-        });
-    }
+        if (trabajador) {
+            Client.getPeticionVacacionesByTrabajadorId(trabajador.idTrabajador).then(data => {
+                setPeticionVacaciones(data);
+            }).catch(error => {
+                console.error("Error obteniendo vacaciones:", error);
+            });
+        }
     }, [trabajador]);
 
-    
+
 
     const colDefs = [
         { headerName: "Inicio", field: "fechaInicio", sortable: true, filter: true, editable: false },
@@ -50,6 +50,12 @@ export default function UserPeticionVacaciones(props) {
 
         },
         {
+            headerName: "Medio dia", field: "medioDia", sortable: true, filter: true, editable: false,
+            cellRenderer: (params) => (
+                params.value ? "Sí" : "No"
+            )
+        },
+        {
             headerName: "Eliminar",
             colId: "eliminar",
             sortable: false,
@@ -57,8 +63,11 @@ export default function UserPeticionVacaciones(props) {
             editable: false,
             width: 110,
             cellRenderer: (params) => {
+                if (params.data.estado == "APROBADO" ||params.data.estado ==  "APROBADA") {
+                    return null
+                }
                 const handleDelete = async (e) => {
-                    e?.stopPropagation?.(); 
+                    e?.stopPropagation?.();
 
                     try {
                         Client.deletePeticionVacaciones(params.data.idPeticion).then(result => {
@@ -97,11 +106,11 @@ export default function UserPeticionVacaciones(props) {
     return (
 
         <Box sx={{ width: '100%', p: 3 }}>
-            <Paper elevation={3} sx={{ p: 2, mb: 3, width:'70%', justifyContent: 'center', display: 'flex',flexDirection:'column', alignItems: 'center', justifySelf: 'center' }}>
+            <Paper elevation={3} sx={{ p: 2, mb: 3, width: '70%', justifyContent: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifySelf: 'center' }}>
                 <Typography variant="h5" component="h2" sx={{ mb: 2 }}>Bienvenido, {trabajador ? trabajador.nombre : "Cargando..."}</Typography>
-                
+
                 <Typography variant="body1" component="h4" sx={{ mb: 2 }}>Inicio de labores: {trabajador ? trabajador.fechaInicio : "Cargando..."}</Typography>
-               
+
                 <Typography variant="body1" component="h4" sx={{ mb: 2 }}>Días de Vacaciones Disponibles {trabajador ? trabajador.vacacionesDisponibles : "Cargando..."}</Typography>
                 <Button
                     variant="contained"
@@ -121,7 +130,7 @@ export default function UserPeticionVacaciones(props) {
                         columnDefs={colDefs}
                         defaultColDef={defaultColDef}
                         theme={themeQuartz}
-                        
+
                         domLayout='autoHeight'
                         getRowId={(params) => String(params.data.idPeticion)}
                     />

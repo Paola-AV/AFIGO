@@ -57,7 +57,6 @@ export default function AdminPeticionVacaciones(props) {
     }, [ users]);
 
     useEffect(() => {
-         console.log("pas "," call",peticionVacacionesPasadas.length," ", trabajadores.length)
         if (peticionVacacionesPasadas && peticionVacacionesPasadas.length > 0 && trabajadores && trabajadores.length > 0) {
             const rowData = peticionVacacionesPasadas.map(peticion => {
                 const trabajador = trabajadores.find(t => t.idTrabajador === peticion.idTrabajador);
@@ -67,12 +66,10 @@ export default function AdminPeticionVacaciones(props) {
                 };
             });
             setRowDataPasadas(rowData);
-            console.log("pas",rowData)
         }
     }, [peticionVacacionesPasadas, trabajadores]);
 
       useEffect(() => {
-           console.log("fut"," call",peticionVacacionesPasadas.length," ", trabajadores.length)
         if (peticionVacaciones && peticionVacaciones.length > 0 && trabajadores && trabajadores.length > 0) {
             const rowData = peticionVacaciones.map(peticion => {
                 const trabajador = trabajadores.find(t => t.idTrabajador === peticion.idTrabajador);
@@ -82,7 +79,6 @@ export default function AdminPeticionVacaciones(props) {
                 };
             });
             setRowData(rowData);
-              console.log("fut",rowData)
         }
     }, [peticionVacaciones, trabajadores]);
 
@@ -104,6 +100,11 @@ export default function AdminPeticionVacaciones(props) {
                 values: ["Pendiente", "Aprobada", "Rechazada"]
             }
 
+        }, {
+            headerName: "Medio dia", field: "medioDia", sortable: true, filter: true, editable: false,
+            cellRenderer: (params) => (
+                params.value ? "Sí" : "No"
+            )
         },
         {
             headerName: "Creado en", field: "fechaCreado", sortable: true, filter: true, editable: false, sort: 'desc',
@@ -130,6 +131,9 @@ export default function AdminPeticionVacaciones(props) {
             editable: false,
             width: 110,
             cellRenderer: (params) => {
+                 if (params.data.estado == "APROBADO" ||params.data.estado ==  "APROBADA") {
+                    return null
+                }
                 const handleDelete = async (e) => {
                     e?.stopPropagation?.(); // evita seleccionar la fila al hacer click
 
@@ -179,6 +183,11 @@ export default function AdminPeticionVacaciones(props) {
                 values: ["Pendiente", "Aprobada", "Rechazada"]
             }
 
+        }, {
+            headerName: "Medio dia", field: "medioDia", sortable: true, filter: true, editable: false,
+            cellRenderer: (params) => (
+                params.value ? "Sí" : "No"
+            )
         },
         {
             headerName: "Creado en", field: "fechaCreado", sortable: true, filter: true, editable: false, sort: 'desc',

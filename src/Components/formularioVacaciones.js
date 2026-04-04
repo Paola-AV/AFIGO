@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography, Container, Paper } from '@mui/material';
+import { Box, Button, Typography, Container, Paper, Checkbox } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Client } from "../Util/client";
 import 'dayjs/locale/es';
@@ -9,21 +9,22 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Nav } from "./Nav";
 import { useAuth } from "../Context/AuthContext";
-import dayjs from 'dayjs'; 
-dayjs.locale('es');   
+import dayjs from 'dayjs';
+dayjs.locale('es');
 
 
 export default function FormularioVacaciones() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [medioDia, setMedioDia] = useState(false);
   const userId = user?.userId;
 
   const [trabajador, setTrabajador] = useState(null);
 
   const [formData, setFormData] = useState({
     estado: "PENDIENTE",
-    fechaInicio: null,   
-    fechaFin: null,     
+    fechaInicio: null,
+    fechaFin: null,
     idTrabajador: null,
   });
 
@@ -60,15 +61,27 @@ export default function FormularioVacaciones() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    let fechaInicio = formData.fechaInicio;
+    let fechaFin = formData.fechaFin;
 
-    if (!formData.fechaInicio || !formData.fechaFin) {
+    if (medioDia) {
+      if (!fechaInicio) {
+        alert("Debes seleccionar la fecha de inicio.");
+        return;
+      }
+      fechaFin = fechaInicio;
+    }
+
+    if (!fechaInicio || !fechaFin) {
       alert("Debes seleccionar ambas fechas.");
       return;
     }
-    if (formData.fechaFin.isBefore(formData.fechaInicio, "day")) {
+
+    if (!medioDia && fechaFin.isBefore(fechaInicio, "day")) {
       alert("La fecha de fin no puede ser anterior a la fecha de inicio.");
       return;
     }
+
     if (!formData.idTrabajador) {
       alert("No se pudo establecer el trabajador. Intenta nuevamente.");
       return;
@@ -77,10 +90,11 @@ export default function FormularioVacaciones() {
     const payload = {
       estado: formData.estado,
       idTrabajador: formData.idTrabajador,
-      fechaInicio: formData.fechaInicio.format("YYYY-MM-DD"),
-      fechaFin: formData.fechaFin.format("YYYY-MM-DD"),
+      fechaInicio: fechaInicio.format("YYYY-MM-DD"),
+      fechaFin: fechaFin.format("YYYY-MM-DD"),
+      medioDia: medioDia
     };
-
+   
     Client.createPeticionVacaciones(payload)
       .then((result) => {
         if (result) {
@@ -115,6 +129,14 @@ export default function FormularioVacaciones() {
             </Typography>
           </Box>
 
+          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Typography>Medio día</Typography>
+            <Checkbox
+              checked={medioDia}
+              onChange={(e) => setMedioDia(e.target.checked)}
+            ></Checkbox>
+          </Box>
+
           {/* Formulario */}
           <Paper elevation={3} sx={{ p: 4 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
@@ -129,18 +151,20 @@ export default function FormularioVacaciones() {
                   }}
                   disablePast
                 />
+                {!medioDia ?
+                  <DatePicker
+                    label="Fecha de Fin"
+                    value={formData.fechaFin}
+                    onChange={(newValue) => setFormData((prev) => ({ ...prev, fechaFin: newValue }))}
+                    format="DD/MM/YYYY"
+                    minDate={minFechaFin}
+                    slotProps={{
+                      textField: { fullWidth: true, required: true },
+                    }}
+                    disablePast
+                  /> : <span></span>
+                }
 
-                <DatePicker
-                  label="Fecha de Fin"
-                  value={formData.fechaFin}
-                  onChange={(newValue) => setFormData((prev) => ({ ...prev, fechaFin: newValue }))}
-                  format="DD/MM/YYYY"
-                  minDate={minFechaFin}
-                  slotProps={{
-                    textField: { fullWidth: true, required: true },
-                  }}
-                  disablePast
-                />
 
                 <Button
                   type="submit"

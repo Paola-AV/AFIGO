@@ -15,7 +15,7 @@ import Fab from '@mui/material/Fab';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 dayjs.locale('es');
-
+import { useAuth } from "../Context/AuthContext";
 
 export default function GastosPage() {
     const [rowData, setRowData] = useState([]);
@@ -24,13 +24,23 @@ export default function GastosPage() {
     const [gastosPorTipo, setGastosPorTipo] = useState([]);
     const [dateFilter, setDateFilter] = useState(null);
     const [dateFilterTo, setDateFilterTo] = useState(null);
+    const { user } = useAuth();
 
     useEffect(() => {
-        Client.getGastos().then(data => {
-            setRowData(data);
-            setGraficoData(data);
-        });
-    }, []);
+        if (user) {
+            Client.getGastos().then(data => {
+                let filtered = data;
+                const sede = user.sede?.trim().toUpperCase();
+                if (sede && sede !== "TODAS") {
+                    filtered = data.filter(p =>
+                        p.sucursal?.toUpperCase().includes(sede)
+                    );
+                }
+                setRowData(filtered);
+                setGraficoData(filtered);
+            });
+        }
+    }, [user]);
 
     useEffect(() => {
         if (!rowData.length) return;

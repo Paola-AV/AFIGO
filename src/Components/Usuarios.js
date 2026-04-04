@@ -22,12 +22,8 @@ export default function Usuarios() {
     const [desactivando, setDesactivando] = useState(false);
 
     useEffect(() => {
-        Client.getUsuarios().then(data => setRowData(data));
+        Client.getUsuarios().then(data => { setRowData(data) });
     }, []);
-
-     useEffect(() => {
-       console.log("Usuarios obtenidos:", rowData);
-    }, [rowData]);
 
     const handleEditar = (data) => {
         setUsuarioSeleccionado(data);
@@ -64,21 +60,29 @@ export default function Usuarios() {
         }
     };
 
-    const EditarCellRenderer = ({ data }) => (
-        <Button
-            size="small"
-            startIcon={<EditIcon fontSize="small" />}
-            onClick={() => handleEditar(data)}
-            sx={{
-                color: '#FF5A00',
-                textTransform: 'none',
-                fontWeight: 600,
-                '&:hover': { backgroundColor: '#FF5A0015' }
-            }}
-        >
-            Editar
-        </Button>
-    );
+    const EditarCellRenderer = ({ data }) => {
+        if (!user) return null;
+        const isSelf = user.userId === data.userId;
+
+        return (
+            <Button
+                size="small"
+                startIcon={<EditIcon fontSize="small" />}
+                onClick={() => !isSelf && handleEditar(data)}
+                disabled={isSelf}
+                sx={{
+                    color: isSelf ? '#9e9e9e' : '#FF5A00',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    cursor: isSelf ? 'not-allowed' : 'pointer',
+                    '&:hover': !isSelf ? { backgroundColor: '#FF5A0015' } : {}
+                }}
+            >
+                {isSelf ? "No permitido" : "Editar"}
+            </Button>
+        );
+    };
+
 
     const DesactivarCellRenderer = ({ data }) => (
         <Button
@@ -100,14 +104,23 @@ export default function Usuarios() {
         { headerName: "Nombre", field: "nombre", sortable: true, filter: true },
         { headerName: "Correo Electrónico", field: "correo", sortable: true, filter: true },
         { headerName: "Usuario", field: "nombreDeUsuario", sortable: true, filter: true },
-        { headerName: "Admin", field: "usuarioAdmin", sortable: true, filter: true,
-            valueFormatter: params => params.value === 1 ? 'Si' : 'No' },
-        {headerName: "Activo", field: "activo", sortable: true, filter: true,
-            valueFormatter: params => params.value === 1 ? 'Si' : 'No' },
-        { headerName: "", field: "acciones", sortable: false, filter: false,
-            cellRenderer: EditarCellRenderer, width: 110, flex: 0 },
-        { headerName: "", field: "desactivar", sortable: false, filter: false,
-            cellRenderer: DesactivarCellRenderer, width: 130, flex: 0 },
+        {
+            headerName: "Admin", field: "usuarioAdmin", sortable: true, filter: true,
+            valueFormatter: params => params.value === 1 ? 'Si' : 'No'
+        },
+        { headerName: "Sede", field: "trabajador.sede", sortable: true, filter: true },
+        {
+            headerName: "Activo", field: "activo", sortable: true, filter: true,
+            valueFormatter: params => params.value === 1 ? 'Si' : 'No'
+        },
+        {
+            headerName: "", field: "acciones", sortable: false, filter: false,
+            cellRenderer: EditarCellRenderer, width: 110, flex: 0
+        },
+        {
+            headerName: "", field: "desactivar", sortable: false, filter: false,
+            cellRenderer: DesactivarCellRenderer, width: 130, flex: 0
+        },
     ];
 
     const defaultColDef = {

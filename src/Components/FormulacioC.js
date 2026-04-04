@@ -9,8 +9,8 @@ import { useAuth } from "../Context/AuthContext"
 
 export function FormularioC() {
     const navigate = useNavigate();
-    const { user  } = useAuth();
-    
+    const { user } = useAuth();
+
     const [formData, setFormData] = useState({
         IdUsuario: '',
         NombreCliente: '',
@@ -21,7 +21,8 @@ export function FormularioC() {
         MetodoEnvio: 'Express',
         DireccionEnvio: '',
         UrgenciaEnvio: 'Leve',
-        TipoPedido: 'COTIZACION'
+        TipoPedido: 'COTIZACION',
+        Sucursal: ''
     });
 
     // Actualizar IdUsuario cuando el usuario carga
@@ -71,12 +72,12 @@ export function FormularioC() {
             alert('Por favor completa nombre del producto y cantidad');
             return;
         }
-        
+
         setDetalles(prev => [
             ...prev,
             { ...detalleTemp, CantProducto: parseInt(detalleTemp.CantProducto) }
         ]);
-        
+
         // Limpiar campos
         setDetalleTemp({
             NombreProducto: '',
@@ -149,9 +150,9 @@ export function FormularioC() {
                 MetodoEnvio: formData.MetodoEnvio,
                 DireccionEnvio: formData.DireccionEnvio.trim(),
                 UrgenciaEnvio: formData.UrgenciaEnvio,
-                TipoPedido: formData.TipoPedido
+                TipoPedido: formData.TipoPedido,
+                Sucursal: formData.Sucursal
             };
-
             const responsePedido = await Client.createPedido(pedidoData);
             const idPedidoCreado = responsePedido.idPedido;
 
@@ -196,11 +197,26 @@ export function FormularioC() {
 
                     <Paper elevation={3} sx={{ p: 4 }}>
                         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                            
+
                             {/* SECCIÓN: DATOS DEL PEDIDO */}
                             <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#13191D', mt: 2 }}>
                                 Datos de la cotización
                             </Typography>
+
+                            <FormControl fullWidth>
+                                <InputLabel>Sucursal</InputLabel>
+                                <Select
+                                    name="Sucursal"
+                                    value={formData.Sucursal}
+                                    onChange={handleSelectChange}
+                                    label="Sucursal"
+                                >
+                                    <MenuItem value="PALMARES">Palmares</MenuItem>
+                                    <MenuItem value="COBANO">Cóbano</MenuItem>
+                                    <MenuItem value="SARCHI">Sarchí</MenuItem>
+                                    <MenuItem value="NICOYA">Nicoya</MenuItem>
+                                </Select>
+                            </FormControl>
 
                             <TextField
                                 fullWidth
@@ -333,12 +349,12 @@ export function FormularioC() {
                                     <Button
                                         variant="outlined"
                                         onClick={handleAddDetalle}
-                                        sx={{ 
-                                            textTransform: 'none', 
+                                        sx={{
+                                            textTransform: 'none',
                                             fontSize: '1rem',
                                             borderColor: '#FF5A00',
                                             color: '#FF5A00',
-                                            '&:hover': { 
+                                            '&:hover': {
                                                 backgroundColor: 'rgba(255, 90, 0, 0.05)',
                                                 borderColor: '#CF4C05'
                                             }

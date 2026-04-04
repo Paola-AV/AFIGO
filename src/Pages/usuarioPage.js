@@ -60,9 +60,7 @@ export default function UsuarioPage(props) {
     if (newPassword.length < 8) {
       return "La nueva contraseña debe tener al menos 8 caracteres.";
     }
-    // Puedes reforzar con regex: mayúscula, minúscula, número, símbolo
-    // const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    // if (!strongRegex.test(newPassword)) return "La contraseña debe incluir mayúsculas, minúsculas, número y símbolo.";
+    
     if (newPassword !== confirmPassword) {
       return "La confirmación no coincide con la nueva contraseña.";
     }
@@ -82,9 +80,7 @@ export default function UsuarioPage(props) {
       setLoading(true);
       setFormError("");
 
-      // 🔁 Ajusta esta llamada según tu API
-      // Ejemplo: Client.cambiarContrasena({ userId: userId.userId, actual: currentPassword, nueva: newPassword })
-      await Client.cambiarContrasena(userId.userId, currentPassword, newPassword);
+      await Client.cambiarContrasena(userId.userId, currentPasword, newPassword);
 
       setSnack({ open: true, message: "Contraseña actualizada correctamente.", severity: "success" });
       setOpenModal(false);
