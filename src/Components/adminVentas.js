@@ -10,10 +10,12 @@ import VentasGraficos from "./ventasGraficos";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/es';
 import dayjs from 'dayjs';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Fab from '@mui/material/Fab';
 import { useAuth } from "../Context/AuthContext";
+dayjs.locale('es');
 
 export default function AdminVentas() {
     const [ventas, setVentas] = useState([]);
@@ -26,6 +28,26 @@ export default function AdminVentas() {
     const [tablaComision, setTablaComision] = useState([]);
     const { user } = useAuth();
     const [sedeFiltro, setSedeFiltro] = useState("TODAS");
+    const meses = {
+        january: 'enero',
+        february: 'febrero',
+        march: 'marzo',
+        april: 'abril',
+        may: 'mayo',
+        june: 'junio',
+        july: 'julio',
+        august: 'agosto',
+        september: 'septiembre',
+        october: 'octubre',
+        november: 'noviembre',
+        december: 'diciembre',
+    };
+
+    const mesEnEspanol = (mes) => {
+        if (!mes) return '';
+        const [m, y] = mes.toLowerCase().split(' ');
+        return `${meses[m] ?? m} ${y}`;
+    };
 
     useEffect(() => {
         if (!desde || !hasta || !user) return;
@@ -237,7 +259,7 @@ export default function AdminVentas() {
     }
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <Box sx={{ width: '100%', p: 3 }}>
 
                 {/* Header con título y date pickers */}
@@ -317,7 +339,7 @@ export default function AdminVentas() {
                     </Typography>
                     {comisiones?.mes && (
                         <Typography variant="body2" color="text.secondary">
-                            {comisiones.mes} — {comisiones.porcentajeComision}% de comisión
+                            {mesEnEspanol(comisiones.mes)} — {comisiones.porcentajeComision}% de comisión
                         </Typography>
                     )}
                 </Box>

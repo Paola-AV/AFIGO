@@ -97,7 +97,7 @@ export default function AdminPeticionVacaciones(props) {
 
             cellEditor: "agSelectCellEditor",
             cellEditorParams: {
-                values: ["Pendiente", "Aprobada", "Rechazada"]
+                values: ["Pendiente", "Aprobado", "Rechazada"]
             }
 
         }, {
