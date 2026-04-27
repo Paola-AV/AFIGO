@@ -19,7 +19,26 @@ export default function UserVentas() {
     const [hasta, setHasta] = useState(hoy);
     const [rowData, setRowData] = useState([]);
     const { user} = useAuth();
+    const meses = {
+        january: 'enero',
+        february: 'febrero',
+        march: 'marzo',
+        april: 'abril',
+        may: 'mayo',
+        june: 'junio',
+        july: 'julio',
+        august: 'agosto',
+        september: 'septiembre',
+        october: 'octubre',
+        november: 'noviembre',
+        december: 'diciembre',
+    };
 
+    const mesEnEspanol = (mes) => {
+        if (!mes) return '';
+        const [m, y] = mes.toLowerCase().split(' ');
+        return `${meses[m] ?? m} ${y}`;
+    };
 
     useEffect(() => {
         if (!desde || !hasta || !user) return;
@@ -212,8 +231,8 @@ export default function UserVentas() {
                         />
                     </Box>
                     <Box sx={{ ml: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                        <Typography variant="subtitle2" color="text.secondary">
-                            Comisión del período: {comision?.mes}
+                        <Typography variant="subtitle2" color="text .secondary">
+                            Comisión del período: {mesEnEspanol(comision?.mes)}
                         </Typography>
                         <Typography variant="h6" fontWeight={600} color="#4caf50">
                             ₡{(comision?.comision ?? 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
